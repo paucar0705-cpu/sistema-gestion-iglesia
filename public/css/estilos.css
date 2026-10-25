@@ -77,3 +77,8 @@ input { padding: .6rem; border: 1px solid var(--borde); border-radius: 6px; font
 .accion-enlace:hover { text-decoration: underline; }
 .accion-boton { background: none; border: 0; padding: 0; color: var(--alerta); font: inherit; font-size: .85rem; cursor: pointer; }
 .accion-boton:hover { text-decoration: underline; }
+
+.formulario-ancho { width: min(480px, 100%); }
+.formulario-ancho form { display: flex; flex-direction: column; gap: 1rem; }
+.acciones-formulario { display: flex; gap: .75rem; }
+.boton--secundario { background: none; border: 1px solid var(--borde); color: var(--texto); }
