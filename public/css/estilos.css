@@ -55,3 +55,25 @@ input { padding: .6rem; border: 1px solid var(--borde); border-radius: 6px; font
   .menu { width: 100%; }
   .contenido { padding: 1rem; }
 }
+
+/* ---- Miembros (RF-02) ---- */
+.filtros { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 1rem; margin-bottom: 1.5rem; }
+.filtros label { font-size: .9rem; }
+.filtros select, .filtros input { padding: .6rem; border: 1px solid var(--borde); border-radius: 6px; font: inherit; }
+.boton--nuevo { margin-left: auto; }
+
+.tabla-scroll { overflow-x: auto; border-radius: var(--radio); }
+.tabla { width: 100%; border-collapse: collapse; background: var(--superficie); border: 1px solid var(--borde); }
+.tabla th, .tabla td { padding: .6rem .75rem; text-align: left; border-bottom: 1px solid var(--borde); font-size: .9rem; white-space: nowrap; }
+.tabla th { background: var(--fondo); color: var(--suave); font-weight: 600; }
+.tabla tbody tr:last-child td { border-bottom: 0; }
+.tabla .acciones { display: flex; gap: .75rem; align-items: center; }
+
+.etiqueta { display: inline-block; padding: .2rem .6rem; border-radius: 999px; font-size: .8rem; font-weight: 600; white-space: nowrap; }
+.etiqueta--activo { background: #e6f4ea; color: #2e7d32; }
+.etiqueta--inactivo { background: #fdecea; color: var(--alerta); }
+
+.accion-enlace { color: var(--primario); text-decoration: none; font-size: .85rem; }
+.accion-enlace:hover { text-decoration: underline; }
+.accion-boton { background: none; border: 0; padding: 0; color: var(--alerta); font: inherit; font-size: .85rem; cursor: pointer; }
+.accion-boton:hover { text-decoration: underline; }
