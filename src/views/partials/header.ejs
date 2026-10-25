@@ -5,24 +5,45 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= typeof titulo !== 'undefined' ? titulo + ' · ' : '' %><%= iglesia.nombre %></title>
   <link rel="stylesheet" href="/css/estilos.css">
+  <link rel="stylesheet" href="/css/menu-movil.css">
+  <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
 <% if (usuario) { %>
 <div class="layout">
   <aside class="menu">
-    <div class="menu__marca"><%= iglesia.nombre %></div>
-    <nav>
-      <% menu.forEach(([clave, s]) => { %>
-        <a href="<%= s.ruta %>" class="<%= rutaActual.startsWith(s.ruta) ? 'activo' : '' %>"><%= s.etiqueta %></a>
-      <% }) %>
-    </nav>
-    <div class="menu__usuario">
-      <strong><%= usuario.nombre %></strong>
-      <span><%= usuario.rol %></span>
-      <form method="POST" action="/logout"><button type="submit">Cerrar sesión</button></form>
+    <div class="menu__cabecera">
+      <div class="menu__marca"><%= iglesia.nombre %></div>
+      <button type="button" id="botonMenu" class="boton-menu" aria-expanded="false" aria-controls="menuPanel" aria-label="Abrir menú">
+        <svg class="boton-menu__icono" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+          <g class="boton-menu__trazo-abrir">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </g>
+          <g class="boton-menu__trazo-cerrar">
+            <line x1="5" y1="5" x2="19" y2="19"></line>
+            <line x1="19" y1="5" x2="5" y2="19"></line>
+          </g>
+        </svg>
+      </button>
+    </div>
+    <div class="menu__panel" id="menuPanel">
+      <div class="menu__marca menu__marca--panel"><%= iglesia.nombre %></div>
+      <nav>
+        <% menu.forEach(([clave, s]) => { %>
+          <a href="<%= s.ruta %>" class="<%= rutaActual.startsWith(s.ruta) ? 'activo' : '' %>"><%= s.etiqueta %></a>
+        <% }) %>
+      </nav>
+      <div class="menu__usuario">
+        <strong><%= usuario.nombre %></strong>
+        <span><%= usuario.rol %></span>
+        <form method="POST" action="/logout"><button type="submit">Cerrar sesión</button></form>
+      </div>
     </div>
   </aside>
-  <main class="contenido">
+  <div class="menu__scrim" id="menuScrim" hidden></div>
+  <main class="contenido" id="contenidoPrincipal">
 <% } else { %>
 <main class="contenido contenido--solo">
 <% } %>
