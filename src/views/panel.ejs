@@ -1,0 +1,36 @@
+<%- include('partials/header', { titulo: 'Panel' }) %>
+<h1>Panel principal</h1>
+
+<div class="indicadores">
+  <div class="tarjeta indicador"><span>Miembros activos</span><strong><%= indicadores.miembros_activos %></strong></div>
+  <div class="tarjeta indicador"><span>Próximos eventos</span><strong><%= indicadores.proximos_eventos %></strong></div>
+  <div class="tarjeta indicador"><span>Asistencias registradas</span><strong><%= indicadores.asistencias_registradas %></strong></div>
+  <div class="tarjeta indicador"><span>Ministerios</span><strong><%= indicadores.ministerios_activos %></strong></div>
+  <% if (ingresosMes !== null) { %>
+    <div class="tarjeta indicador indicador--dinero"><span>Ingresos del mes</span>
+      <strong>$<%= ingresosMes.toLocaleString('es-MX', { minimumFractionDigits: 2 }) %></strong></div>
+  <% } %>
+</div>
+
+<!-- TODO Persona 1 / Persona 4: gráfica con Chart.js (ej. v_asistencia_por_evento) -->
+
+<div class="columnas">
+  <section class="tarjeta">
+    <h2>Próximos eventos</h2>
+    <% if (!proximosEventos.length) { %><p class="sub">Sin eventos programados.</p><% } %>
+    <ul class="lista">
+      <% proximosEventos.forEach(e => { %>
+        <li><strong><%= e.titulo %></strong><span><%= e.fecha %> <%= e.hora || '' %> · <%= e.lugar || '' %></span></li>
+      <% }) %>
+    </ul>
+  </section>
+  <section class="tarjeta">
+    <h2>Avisos</h2>
+    <ul class="lista">
+      <% anuncios.forEach(a => { %>
+        <li class="<%= a.importante ? 'importante' : '' %>"><strong><%= a.titulo %></strong><span><%= a.contenido %></span></li>
+      <% }) %>
+    </ul>
+  </section>
+</div>
+<%- include('partials/footer') %>

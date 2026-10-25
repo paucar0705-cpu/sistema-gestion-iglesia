@@ -1,0 +1,20 @@
+# Dependencias
+node_modules/
+
+# Variables de entorno (cada quien tiene la suya)
+.env
+
+# Base de datos local (se genera con npm run db:reset)
+data/*.db
+data/*.db-wal
+data/*.db-shm
+
+# Archivos exportados de reportes
+exports/
+
+# Sistema / editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log

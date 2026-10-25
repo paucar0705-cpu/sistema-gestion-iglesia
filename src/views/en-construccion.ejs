@@ -1,0 +1,7 @@
+<%- include('partials/header', { titulo: SECCIONES[seccion].etiqueta }) %>
+<h1><%= SECCIONES[seccion].etiqueta %></h1>
+<section class="tarjeta">
+  <p><strong><%= SECCIONES[seccion].rf %></strong> · Módulo en construcción.</p>
+  <p class="sub">Reemplazar esta vista por <code>src/views/<%= seccion %>/</code> cuando se implemente.</p>
+</section>
+<%- include('partials/footer') %>

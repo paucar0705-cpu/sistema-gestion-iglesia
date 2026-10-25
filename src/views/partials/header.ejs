@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof titulo !== 'undefined' ? titulo + ' · ' : '' %><%= iglesia.nombre %></title>
+  <link rel="stylesheet" href="/css/estilos.css">
+</head>
+<body>
+<% if (usuario) { %>
+<div class="layout">
+  <aside class="menu">
+    <div class="menu__marca"><%= iglesia.nombre %></div>
+    <nav>
+      <% menu.forEach(([clave, s]) => { %>
+        <a href="<%= s.ruta %>" class="<%= rutaActual.startsWith(s.ruta) ? 'activo' : '' %>"><%= s.etiqueta %></a>
+      <% }) %>
+    </nav>
+    <div class="menu__usuario">
+      <strong><%= usuario.nombre %></strong>
+      <span><%= usuario.rol %></span>
+      <form method="POST" action="/logout"><button type="submit">Cerrar sesión</button></form>
+    </div>
+  </aside>
+  <main class="contenido">
+<% } else { %>
+<main class="contenido contenido--solo">
+<% } %>
