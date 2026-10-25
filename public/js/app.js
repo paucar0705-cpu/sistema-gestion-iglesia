@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const campoCorreo = formLogin.querySelector('#correo');
   const campoPassword = formLogin.querySelector('#password');
-  const errorCliente = document.querySelector('#errorCliente');
+  const mensajeError = document.querySelector('#mensajeError');
   const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   function marcarError(campo, invalido) {
@@ -19,14 +19,21 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function mostrarError(mensaje) {
-    errorCliente.textContent = mensaje;
-    errorCliente.hidden = false;
+    mensajeError.textContent = mensaje;
+    mensajeError.hidden = false;
   }
 
   function ocultarError() {
-    errorCliente.hidden = true;
-    errorCliente.textContent = '';
+    mensajeError.hidden = true;
+    mensajeError.textContent = '';
   }
+
+  [campoCorreo, campoPassword].forEach((campo) => {
+    campo.addEventListener('input', () => {
+      marcarError(campo, false);
+      ocultarError();
+    });
+  });
 
   formLogin.addEventListener('submit', (evento) => {
     const correo = campoCorreo.value.trim();

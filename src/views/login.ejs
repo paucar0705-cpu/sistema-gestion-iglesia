@@ -2,8 +2,7 @@
 <section class="tarjeta login">
   <h1><%= iglesia.nombre %></h1>
   <p class="sub">Inicia sesión para continuar</p>
-  <% if (error) { %><p class="alerta" role="alert"><%= error %></p><% } %>
-  <div id="errorCliente" class="alerta" role="alert" hidden></div>
+  <p id="mensajeError" class="alerta" role="alert"<% if (!error) { %> hidden<% } %>><%= error || '' %></p>
   <form method="POST" action="/login" novalidate>
     <label>Correo electrónico
       <input type="email" name="correo" id="correo" value="<%= correo %>" required autofocus>
