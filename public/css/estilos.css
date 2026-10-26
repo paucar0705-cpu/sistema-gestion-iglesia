@@ -34,9 +34,14 @@ code { background: #eee; padding: 0 .3em; border-radius: 4px; }
 
 .login { width: min(380px, 100%); }
 .login form { display: flex; flex-direction: column; gap: 1rem; }
+.tarjeta.login { box-shadow: 0 4px 16px rgba(31, 35, 40, .08); }
 label { display: flex; flex-direction: column; gap: .3rem; font-size: .9rem; }
 input { padding: .6rem; border: 1px solid var(--borde); border-radius: 6px; font: inherit; }
+input:focus { outline: none; border-color: var(--primario); box-shadow: 0 0 0 3px rgba(59, 91, 171, .15); }
+input[aria-invalid="true"] { border-color: var(--alerta); }
 .boton { display: inline-block; background: var(--primario); color: #fff; border: 0; padding: .65rem 1rem; border-radius: 6px; font: inherit; cursor: pointer; text-decoration: none; text-align: center; }
+.enlace-sutil { align-self: center; color: var(--suave); font-size: .85rem; text-decoration: none; }
+.enlace-sutil:hover { color: var(--primario); text-decoration: underline; }
 
 .indicadores { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
 .indicador span { color: var(--suave); font-size: .85rem; }

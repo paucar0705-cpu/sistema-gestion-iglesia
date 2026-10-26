@@ -22,6 +22,19 @@ function requireSeccion(seccion) {
   };
 }
 
+// Exige uno de los roles indicados. Se usa en operaciones de modificación,
+// aunque el usuario sí tenga permiso para consultar la sección.
+function requireRoles(...rolesPermitidos) {
+  return (req, res, next) => {
+    const rol = req.session && req.session.usuario && req.session.usuario.rol;
+    if (rolesPermitidos.includes(rol)) return next();
+    return res.status(403).render('error', {
+      titulo: 'Acceso denegado',
+      mensaje: 'Tu rol no tiene permiso para realizar esta operación.',
+    });
+  };
+}
+
 // Exige rol con acceso a información financiera
 function requireFinanciero(req, res, next) {
   const rol = req.session.usuario && req.session.usuario.rol;
@@ -32,4 +45,4 @@ function requireFinanciero(req, res, next) {
   });
 }
 
-module.exports = { requireAuth, requireSeccion, requireFinanciero };
+module.exports = { requireAuth, requireSeccion, requireRoles, requireFinanciero };
