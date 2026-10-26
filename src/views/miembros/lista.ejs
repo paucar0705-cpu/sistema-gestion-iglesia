@@ -1,0 +1,64 @@
+<%- include('../partials/header', { titulo: 'Miembros' }) %>
+<h1>Miembros</h1>
+
+<form class="filtros" method="GET" action="/miembros">
+  <label>Buscar por nombre
+    <input type="search" name="q" value="<%= q %>" placeholder="Nombre o apellido">
+  </label>
+  <label>Estado
+    <select name="estado">
+      <option value="todos" <%= estado === 'todos' ? 'selected' : '' %>>Todos</option>
+      <option value="activos" <%= estado === 'activos' ? 'selected' : '' %>>Activos</option>
+      <option value="inactivos" <%= estado === 'inactivos' ? 'selected' : '' %>>Inactivos</option>
+    </select>
+  </label>
+  <button type="submit" class="boton">Buscar</button>
+  <% if (puedeEditar) { %>
+    <a class="boton boton--nuevo" href="/miembros/nuevo">Nuevo miembro</a>
+  <% } %>
+</form>
+
+<% if (!miembros.length) { %>
+  <p class="sub">No se encontraron miembros<% if (q) { %> para "<%= q %>"<% } %>.</p>
+<% } else { %>
+<div class="tabla-scroll">
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th scope="col">Nombre</th>
+        <th scope="col">Teléfono</th>
+        <th scope="col">Correo</th>
+        <th scope="col">Fecha de ingreso</th>
+        <th scope="col">Estado</th>
+        <% if (puedeEditar) { %><th scope="col">Acciones</th><% } %>
+      </tr>
+    </thead>
+    <tbody>
+      <% miembros.forEach(m => { %>
+        <tr>
+          <td><%= m.nombre %> <%= m.apellidos || '' %></td>
+          <td><%= m.telefono || '—' %></td>
+          <td><%= m.correo || '—' %></td>
+          <td><%= m.fecha_ingreso %></td>
+          <td>
+            <span class="etiqueta <%= m.activo === 1 ? 'etiqueta--activo' : 'etiqueta--inactivo' %>">
+              <%= m.activo === 1 ? 'Activo' : 'Inactivo' %>
+            </span>
+          </td>
+          <% if (puedeEditar) { %>
+          <td class="acciones">
+            <a class="accion-enlace" href="/miembros/<%= m.id %>/editar">Editar</a>
+            <% if (m.activo === 1) { %>
+            <form method="POST" action="/miembros/<%= m.id %>/desactivar" class="form-desactivar" data-nombre="<%= m.nombre %> <%= m.apellidos || '' %>">
+              <button type="submit" class="accion-boton">Desactivar</button>
+            </form>
+            <% } %>
+          </td>
+          <% } %>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+<% } %>
+<%- include('../partials/footer') %>
