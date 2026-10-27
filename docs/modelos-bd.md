@@ -6,6 +6,7 @@ Responsable: Persona 3 (Base de datos). Si necesitas otra función o cambiar un 
 ```js
 const Ministerios = require('../models/ministerios.model');
 const Donaciones  = require('../models/donaciones.model');
+const Usuarios    = require('../models/usuarios.model');
 const { ErrorDatos } = require('../models/errores');
 ```
 
@@ -71,3 +72,43 @@ Notas:
 - **`miembroId` vacío o `null` = aportación anónima.** En la lista aparece como `donante: 'Anónimo'`.
 - `registradoPor` es `req.session.usuario.id`.
 - Las donaciones no se editan ni se borran (registro financiero).
+
+---
+
+## Usuarios y recuperación de contraseña (RF-01) — `src/models/usuarios.model.js`
+
+**División acordada:** el modelo guarda de forma segura (hash bcrypt de contraseñas, hash SHA-256 de tokens, nunca devuelve hashes). Backend valida formato y requisitos de contraseña, maneja login, sesiones, permisos y las pantallas del flujo de recuperación.
+
+| Función | Recibe | Devuelve | Errores (`codigo`) |
+|---|---|---|---|
+| `listarRoles()` | — | `[{ id, nombre }]` (los 5 roles) | — |
+| `listar(opciones)` | `{ incluirInactivos }` (por defecto `true`) | `id, nombre, correo, rol_id, rol, miembro_id, miembro, activo, creado_en` | — |
+| `obtener(id)` | id | Un usuario (sin hash) o `undefined` | — |
+| `buscarPorCorreo(correo)` | correo | Un usuario (sin hash) o `undefined` | — |
+| `verificarCredenciales(correo, password)` | correo y contraseña en texto | `{ id, nombre, correo, rol }` o `null` | — |
+| `miembrosSinUsuario()` | — | Miembros activos sin usuario (para vincular, opcional) | — |
+| `crear(datos)` | `{ nombre, correo, password, rolId, miembroId? }` | id nuevo | `NOMBRE_REQUERIDO`, `CORREO_REQUERIDO`, `CORREO_DUPLICADO`, `PASSWORD_REQUERIDA`, `PASSWORD_MUY_LARGA`, `ROL_NO_VALIDO`, `MIEMBRO_NO_VALIDO`, `MIEMBRO_YA_VINCULADO` |
+| `actualizar(id, datos)` | `{ nombre, correo, miembroId? }` | `true` / `false` | `NOMBRE_REQUERIDO`, `CORREO_REQUERIDO`, `CORREO_DUPLICADO`, `MIEMBRO_NO_VALIDO`, `MIEMBRO_YA_VINCULADO` |
+| `cambiarRol(id, rolId)` | ids | `true` / `false` | `ROL_NO_VALIDO`, `ULTIMO_ADMIN` |
+| `cambiarPassword(id, nueva)` | id y contraseña en texto | `true` / `false` | `PASSWORD_REQUERIDA`, `PASSWORD_MUY_LARGA` |
+| `desactivar(id)` / `reactivar(id)` | id | `true` / `false` | `ULTIMO_ADMIN` (solo desactivar) |
+| `crearTokenRecuperacion(usuarioId)` | id del usuario | `{ token, expiraEn }` o `null` si no existe o está inactivo | — |
+| `validarToken(token)` | token del enlace | `{ id, nombre, correo }` o `null` | — |
+| `restablecerPassword(token, nueva)` | token y contraseña en texto | `{ id, nombre, correo }` | `TOKEN_INVALIDO`, `PASSWORD_REQUERIDA`, `PASSWORD_MUY_LARGA` |
+
+Notas:
+- **La contraseña se manda en texto** y el modelo guarda el hash. No hagan el hash antes de llamar al modelo.
+- El correo se guarda en minúsculas y la búsqueda no distingue mayúsculas.
+- **Siempre queda al menos un Administrador activo**: `cambiarRol` y `desactivar` lanzan `ULTIMO_ADMIN` si se intenta quitar el último.
+- Al desactivar o cambiar la contraseña se anulan los tokens de recuperación pendientes. La **sesión** abierta del usuario la debe cerrar backend.
+
+### Flujo de recuperación (sugerido para backend)
+
+1. `POST /recuperar` con el correo → `const u = Usuarios.buscarPorCorreo(correo)`.
+2. Si existe: `const { token } = Usuarios.crearTokenRecuperacion(u.id)` y se arma el enlace `/restablecer/<token>`.
+   Como el sistema no envía correos (fuera de alcance), el enlace se puede mostrar en pantalla o en la consola para la demostración.
+3. Responder **siempre el mismo mensaje** exista o no el correo (ej. "Si el correo está registrado, se generó un enlace"), para no revelar qué correos existen.
+4. `GET /restablecer/:token` → `Usuarios.validarToken(token)`; si es `null`, mostrar "enlace inválido o expirado".
+5. `POST /restablecer/:token` → validar requisitos de la contraseña y luego `Usuarios.restablecerPassword(token, nueva)`.
+
+El token dura **60 minutos** y es de **un solo uso**; si se pide otro, el anterior deja de servir.
