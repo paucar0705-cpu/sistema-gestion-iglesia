@@ -1,0 +1,25 @@
+AVANCE RF-09: REPORTES
+
+Preparación en una rama feature/reportes-lirio-rf09 basada en develop.
+Copiar los tres archivos incluidos a las mismas rutas dentro del repositorio.
+No reemplazar ningún archivo en main ni develop directamente.
+
+Para ejecutar en Windows PowerShell:
+1. npm install
+2. Copy-Item .env.example .env (si aún no hay .env)
+3. npm run db:reset  (ATENCIÓN: borra y reconstruye la BD LOCAL)
+4. npm run dev
+5. Abrir http://localhost:3000 y entrar con usuarios de prueba del README.
+
+Comprobar:
+- Administrador: puede entrar a los 4 reportes, descargar Excel.
+- Pastor / Secretario: no pueden entrar al reporte de ingresos, ni su Excel (HTTP 403).
+- Tesorero: puede ver ingresos.
+- Coordinador: sección Reportes denegada (HTTP 403, según permisos actuales).
+- Fechas de asistencia y donaciones filtran correctamente, incluso al exportar.
+- Rangos de fechas invertidos / inválidos dan HTTP 422.
+- Los archivos XLSX tienen las columnas y resultados esperados.
+
+NO SE HAN EJECUTADO pruebas end-to-end en el repositorio del equipo.
+La interfaz es básica y Frontend puede mejorar su presentación.
+No fusionar con develop antes de validar con el equipo.
