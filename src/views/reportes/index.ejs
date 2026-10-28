@@ -1,0 +1,12 @@
+<%- include('../partials/header', { titulo: 'Reportes' }) %>
+<h1>Reportes</h1>
+<p class="sub">Consulta los registros de la iglesia y descarga los informes en Excel.</p>
+<div class="columnas">
+  <% reportes.forEach(r => { %>
+    <section class="tarjeta">
+      <h2><%= r.titulo %></h2>
+      <a class="boton" href="/reportes/<%= r.tipo %>">Consultar</a>
+    </section>
+  <% }) %>
+</div>
+<%- include('../partials/footer') %>
