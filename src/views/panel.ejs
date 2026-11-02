@@ -12,7 +12,42 @@
   <% } %>
 </div>
 
-<!-- TODO Persona 1 / Persona 4: gráfica con Chart.js (ej. v_asistencia_por_evento) -->
+<% if (puedeVerAsistencias) { %>
+  <section class="tarjeta grafica">
+    <h2>Asistencia por evento</h2>
+    <% if (errorAsistencias) { %>
+      <p class="alerta" role="alert">No se pudieron cargar los datos de asistencia. Intenta de nuevo más tarde.</p>
+    <% } else if (!asistenciasPorEvento.length) { %>
+      <p class="sub">Aún no hay asistencias registradas.</p>
+    <% } else { %>
+      <p class="sub grafica__sub">Presentes y ausentes en los últimos eventos con registro.</p>
+      <p class="alerta" id="graficaError" role="alert" hidden>No se pudo cargar la gráfica. Puedes consultar los datos en la tabla.</p>
+      <noscript><p class="alerta">La gráfica necesita JavaScript. Puedes consultar los datos en la tabla.</p></noscript>
+      <div class="grafica__lienzo" id="graficaContenedor" hidden>
+        <canvas id="graficaAsistencias" role="img"
+          aria-label="Gráfica de barras de presentes y ausentes por evento. Los datos están en la tabla siguiente."
+          data-asistencias="<%= JSON.stringify(asistenciasPorEvento) %>"></canvas>
+      </div>
+      <details class="grafica__datos" id="graficaDatos">
+        <summary>Ver datos en tabla</summary>
+        <div class="tabla-scroll">
+          <table class="tabla">
+            <thead><tr><th>Evento</th><th>Fecha</th><th>Presentes</th><th>Ausentes</th></tr></thead>
+            <tbody>
+              <% asistenciasPorEvento.forEach(e => { %>
+                <tr><td><%= e.titulo %></td><td><%= e.fecha %></td><td><%= e.presentes %></td><td><%= e.ausentes %></td></tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </details>
+      <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.9/dist/chart.umd.js"
+        integrity="sha384-4W8gMhOYqk0FPg9sAMkb3g/P2fXtzbUyDUUgMlA1EEig8z/U/13EYUjErc1H382b"
+        crossorigin="anonymous"></script>
+      <script defer src="/js/panel-graficas.js"></script>
+    <% } %>
+  </section>
+<% } %>
 
 <div class="columnas">
   <section class="tarjeta">

@@ -5,7 +5,7 @@
 const router = require('express').Router();
 const db = require('../db/connection');
 const { requireSeccion } = require('../middlewares/auth');
-const { ROLES_FINANCIEROS } = require('../config/permisos');
+const { ROLES_FINANCIEROS, puedeVer } = require('../config/permisos');
 
 router.get('/', requireSeccion('panel'), (req, res) => {
   const indicadores = db.prepare('SELECT * FROM v_indicadores_panel').get();
@@ -30,7 +30,38 @@ router.get('/', requireSeccion('panel'), (req, res) => {
     `).get().total;
   }
 
-  res.render('panel', { indicadores, proximosEventos, anuncios, ingresosMes });
-});
+  // RF-08: Consultar las asistencias de los últimos 8 eventos.
+  // Solo para los roles con acceso a Asistencias (docs/diagrama-er.md).
+  // Si la consulta falla, el panel se muestra igual con un aviso en la gráfica.
+  const puedeVerAsistencias = puedeVer(req.session.usuario.rol, 'asistencias');
+  let asistenciasPorEvento = [];
+  let errorAsistencias = false;
+  if (puedeVerAsistencias) {
+    try {
+      asistenciasPorEvento = db.prepare(`
+        SELECT evento_id, titulo, fecha, presentes, ausentes
+        FROM v_asistencia_por_evento
+        WHERE total_registrados > 0
+        ORDER BY fecha DESC, evento_id DESC
+        LIMIT 8
+      `).all().reverse();
+    } catch (err) {
+      console.error('Error al consultar asistencias del panel:', err);
+      errorAsistencias = true;
+    }
+  }
+
+  // Enviar los datos al Dashboard.
+  res.render('panel', {
+    indicadores,
+    proximosEventos,
+    anuncios,
+    ingresosMes,
+    puedeVerAsistencias,
+    asistenciasPorEvento,
+    errorAsistencias
+  });
+
+}); // Cierra router.get()
 
 module.exports = router;
