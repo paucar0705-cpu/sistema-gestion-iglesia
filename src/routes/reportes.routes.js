@@ -2,12 +2,16 @@
 const router = require('express').Router();
 const ExcelJS = require('exceljs');
 const db = require('../db/connection');
-const { requireSeccion, requireFinanciero } = require('../middlewares/auth');
-const { ROLES_FINANCIEROS } = require('../config/permisos');
+const { requireSeccion, requireFinanciero, requireRoles } = require('../middlewares/auth');
+const { ROLES, ROLES_FINANCIEROS } = require('../config/permisos');
 
 router.use(requireSeccion('reportes'));
 
+// Acceso a las vistas de asistencia y ministerios según docs/diagrama-er.md.
+const ROLES_PARTICIPACION = [ROLES.ADMIN, ROLES.PASTOR, ROLES.SECRETARIO];
+
 // Lista fija: los parámetros de la URL nunca se convierten en nombres de tablas SQL.
+// "roles" limita el reporte; sin esa clave basta con tener acceso a la sección.
 const REPORTES = {
   miembros: {
     titulo: 'Reporte general de miembros',
@@ -18,6 +22,7 @@ const REPORTES = {
   },
   asistencia: {
     titulo: 'Asistencia por evento',
+    roles: ROLES_PARTICIPACION,
     columnas: [
       ['titulo', 'Evento'], ['tipo', 'Tipo'], ['fecha', 'Fecha'],
       ['total_registrados', 'Registrados'], ['presentes', 'Presentes'],
@@ -26,6 +31,7 @@ const REPORTES = {
   },
   ministerios: {
     titulo: 'Participación por ministerio',
+    roles: ROLES_PARTICIPACION,
     columnas: [
       ['ministerio', 'Ministerio'], ['coordinador', 'Coordinador'],
       ['integrantes_activos', 'Integrantes activos'], ['actividades', 'Actividades'],
@@ -34,6 +40,7 @@ const REPORTES = {
   },
   ingresos: {
     titulo: 'Ingresos por periodo',
+    roles: ROLES_FINANCIEROS,
     columnas: [
       ['mes', 'Mes'], ['concepto', 'Concepto'], ['metodo', 'Método'],
       ['aportaciones', 'Aportaciones'], ['anonimas', 'Anónimas'], ['total', 'Total (MXN)'],
@@ -48,10 +55,18 @@ function fechaValida(valor) {
   return !Number.isNaN(fecha.getTime()) && fecha.toISOString().slice(0, 10) === valor;
 }
 
+// Un parámetro repetido llega como lista: se rechaza para no devolver datos sin filtrar.
+function parametro(req, nombre) {
+  const valor = req.query[nombre];
+  if (valor === undefined) return '';
+  if (typeof valor !== 'string') throw new Error(`El filtro "${nombre}" solo admite un valor.`);
+  return valor.trim();
+}
+
 function filtros(req) {
-  const desde = typeof req.query.desde === 'string' ? req.query.desde.trim() : '';
-  const hasta = typeof req.query.hasta === 'string' ? req.query.hasta.trim() : '';
-  const tipoEvento = typeof req.query.tipo === 'string' ? req.query.tipo.trim() : '';
+  const desde = parametro(req, 'desde');
+  const hasta = parametro(req, 'hasta');
+  const tipoEvento = parametro(req, 'tipo');
   if ((desde && !fechaValida(desde)) || (hasta && !fechaValida(hasta))) {
     throw new Error('Ingresa fechas válidas en formato YYYY-MM-DD.');
   }
@@ -113,7 +128,8 @@ function acceso(req, res, next) {
     });
   }
   if (req.params.reporte === 'ingresos') return requireFinanciero(req, res, next);
-  return next();
+  const { roles } = REPORTES[req.params.reporte];
+  return roles ? requireRoles(...roles)(req, res, next) : next();
 }
 
 function obtenerDatos(req, res) {
@@ -130,7 +146,7 @@ function obtenerDatos(req, res) {
 router.get('/', (req, res) => {
   res.render('reportes/index', {
     reportes: Object.entries(REPORTES)
-      .filter(([tipo]) => tipo !== 'ingresos' || ROLES_FINANCIEROS.includes(req.session.usuario.rol))
+      .filter(([, config]) => !config.roles || config.roles.includes(req.session.usuario.rol))
       .map(([tipo, config]) => ({ tipo, titulo: config.titulo })),
   });
 });
@@ -145,9 +161,9 @@ router.get('/:reporte/excel', acceso, async (req, res, next) => {
     hoja.columns = datos.configuracion.columnas.map(([key, header]) => ({ key, header, width: 24 }));
     hoja.getRow(1).font = { bold: true };
     hoja.views = [{ state: 'frozen', ySplit: 1 }];
-        hoja.autoFilter = {
+    hoja.autoFilter = {
       from: { row: 1, column: 1 },
-      to: { row: 1, column: datos.configuracion.columnas.length },
+      to: { row: datos.filas.length + 1, column: datos.configuracion.columnas.length },
     };
 
     datos.filas.forEach(fila => hoja.addRow(fila));

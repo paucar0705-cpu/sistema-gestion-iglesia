@@ -36,7 +36,7 @@
         <% configuracion.columnas.forEach(([key]) => { %><td>
           <% if (reporte === 'ingresos' && key === 'total') { %>
             <%= Number(fila[key]).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }) %>
-          <% } else { %><%= fila[key] == null ? '—' : fila[key] %><% } %>
+          <% } else { %><%= fila[key] == null || fila[key] === '' ? '—' : fila[key] %><% } %>
         </td><% }) %>
       </tr><% }) %>
     </tbody>

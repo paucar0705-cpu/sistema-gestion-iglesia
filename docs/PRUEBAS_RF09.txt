@@ -1,25 +1,25 @@
-AVANCE RF-09: REPORTES
+RF-09: REPORTES
 
-Preparación en una rama feature/reportes-lirio-rf09 basada en develop.
-Copiar los tres archivos incluidos a las mismas rutas dentro del repositorio.
-No reemplazar ningún archivo en main ni develop directamente.
+La documentación completa y los resultados de las pruebas están en docs/PRUEBAS_RF09.md.
 
-Para ejecutar en Windows PowerShell:
+Rama: feature/reportes-rf09 (PR #10, borrador).
+No fusionar con develop antes de validar con el equipo.
+
+Pruebas automatizadas (usan una base temporal; no tocan data/iglesia.db):
+  node --test --test-concurrency=1 "test/*.test.js"
+
+Prueba manual en Windows PowerShell:
 1. npm install
 2. Copy-Item .env.example .env (si aún no hay .env)
-3. npm run db:reset  (ATENCIÓN: borra y reconstruye la BD LOCAL)
+3. npm run db:reset  (ATENCIÓN: borra y reconstruye la BD LOCAL; omitir si ya tienes datos que conservar)
 4. npm run dev
-5. Abrir http://localhost:3000 y entrar con usuarios de prueba del README.
+5. Abrir http://localhost:3000 y entrar con los usuarios de prueba del README.
 
 Comprobar:
-- Administrador: puede entrar a los 4 reportes, descargar Excel.
-- Pastor / Secretario: no pueden entrar al reporte de ingresos, ni su Excel (HTTP 403).
-- Tesorero: puede ver ingresos.
-- Coordinador: sección Reportes denegada (HTTP 403, según permisos actuales).
-- Fechas de asistencia y donaciones filtran correctamente, incluso al exportar.
-- Rangos de fechas invertidos / inválidos dan HTTP 422.
-- Los archivos XLSX tienen las columnas y resultados esperados.
-
-NO SE HAN EJECUTADO pruebas end-to-end en el repositorio del equipo.
-La interfaz es básica y Frontend puede mejorar su presentación.
-No fusionar con develop antes de validar con el equipo.
+- Administrador: entra a los 4 reportes y descarga sus Excel.
+- Pastor / Secretario: entran a miembros, asistencia y ministerios; ingresos y su Excel dan HTTP 403.
+- Tesorero: entra a miembros e ingresos; asistencia y ministerios dan HTTP 403.
+- Coordinador: la sección Reportes da HTTP 403.
+- Fechas de asistencia e ingresos filtran correctamente, incluso al exportar.
+- Fechas inválidas, rangos invertidos y filtros repetidos dan HTTP 422.
+- Abrir los archivos .xlsx en Microsoft Excel (pendiente de ejecutar).
