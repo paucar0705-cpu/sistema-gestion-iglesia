@@ -2,7 +2,7 @@
 
 **Rama:** `feature/reportes-rf09` (PR #10, borrador)
 **Fecha de ejecución:** 2 de noviembre de 2026
-**Entorno:** Windows 11, Node.js 24.13.0, Microsoft Edge en modo headless
+**Entorno:** Windows 11, Node.js 24.13.0, Microsoft Edge (headless y revisión manual), Microsoft Excel 16.0
 
 ## Objetivo
 
@@ -26,7 +26,7 @@ No requieren dependencias nuevas ni tocan `data/iglesia.db`: cada caso usa una b
 ## Casos de prueba automatizados (`test/reportes.test.js`)
 
 Resultado sobre el código original: **56 aprobadas y 10 fallidas.**
-Resultado tras las correcciones: **66 de 66 aprobadas.**
+Resultado tras las correcciones: **66 de 66 aprobadas.** Se repitió el 2 de noviembre de 2026 con RF-08 y RF-09 integradas sobre `develop`, con el mismo resultado.
 
 | Grupo | Qué comprueba | Pruebas | Resultado |
 |---|---|---|---|
@@ -47,6 +47,25 @@ Resultado tras las correcciones: **66 de 66 aprobadas.**
 ## Casos comprobados en navegador
 
 Con Edge headless, sobre el reporte de ingresos como Administrador: se muestra en 1280 px y 375 px, sin errores de consola ni scroll horizontal en la página. En móvil, la tabla se desplaza dentro de su contenedor.
+
+En la revisión manual con Edge sobre la aplicación integrada, la visualización de los reportes fue satisfactoria.
+
+## Casos comprobados en Microsoft Excel
+
+Microsoft Excel 16.0 sí está instalado en el equipo de prueba. Una versión anterior de este documento decía lo contrario por un error en la búsqueda.
+
+**Prueba automatizada con Excel real.** Un script temporal, que no forma parte del repositorio, abrió en Excel los cuatro archivos descargados de la aplicación integrada, en modo de solo lectura y con las alertas desactivadas.
+
+| Reporte | Abre sin error | Filas de datos | Autofiltro | Filtro aplicado | Filas visibles |
+|---|---|---|---|---|---|
+| Miembros | Sí | 14 | `A1:E15` | Estado = Inactivo | 2 |
+| Asistencia | Sí | 11 | `A1:G12` | Tipo = culto | 6 |
+| Ministerios | Sí | 5 | `A1:E6` | Ministerio = Niños | 1 |
+| Ingresos | Sí | 11 | `A1:F12` | Concepto = diezmo | 6 |
+
+En los cuatro, ningún libro se marcó como reparado, los encabezados son correctos y el encabezado queda inmovilizado. En ingresos, la columna Total usa el formato `$#,##0.00` y se ve, por ejemplo, como `$400.00`. Las filas visibles coinciden con los datos.
+
+**Revisión manual.** El reporte de ingresos se abrió correctamente en Excel y sus filtros funcionaron.
 
 ## Errores encontrados
 
@@ -77,5 +96,9 @@ Con Edge headless, sobre el reporte de ingresos como Administrador: se muestra e
 
 ## Pendiente de ejecución manual
 
-- [ ] Abrir los cuatro `.xlsx` en Microsoft Excel. Los archivos se validaron leyéndolos con ExcelJS, porque no se encontró Excel ni LibreOffice en el equipo de prueba. Revisar que abran sin aviso de reparación, que el autofiltro funcione y que la columna Total se vea como moneda.
+- [x] Abrir los cuatro `.xlsx` en Microsoft Excel (prueba automatizada).
+- [x] Abrir el reporte de ingresos en Excel y usar sus filtros (revisión manual).
+- [x] Revisar la visualización de los reportes en Edge (revisión manual).
+- [ ] Abrir a mano en Excel los reportes de miembros, asistencia y ministerios. Solo se abrieron con la prueba automatizada.
 - [ ] Revisar los reportes en un teléfono real.
+- [ ] Revisar los reportes en Chrome y Firefox. No están instalados en el equipo de prueba.
