@@ -2,7 +2,7 @@
 
 **Rama:** `feature/panel-graficas` (PR #12, borrador)
 **Fecha de ejecución:** 2 de noviembre de 2026
-**Entorno:** Windows 11, Node.js 24.13.0, Microsoft Edge en modo headless
+**Entorno:** Windows 11, Node.js 24.13.0, Microsoft Edge (headless y revisión manual)
 
 ## Objetivo
 
@@ -26,7 +26,7 @@ No requieren dependencias nuevas ni tocan `data/iglesia.db`: cada caso usa una b
 
 ## Casos de prueba automatizados (`test/panel.test.js`)
 
-Resultado: **17 de 17 aprobadas.**
+Resultado: **17 de 17 aprobadas.** Se repitió el 2 de noviembre de 2026 con RF-08 y RF-09 integradas sobre `develop`, con el mismo resultado.
 
 | Caso | Resultado |
 |---|---|
@@ -61,6 +61,16 @@ Se ejecutaron con Edge headless y un script temporal que no forma parte del repo
 | CDN bloqueado: aviso visible y tabla abierta | Aprobado |
 | Tesorero: panel sin gráfica | Aprobado |
 
+## Revisión manual en Edge
+
+Se revisó a mano el panel de la aplicación integrada (RF-08 y RF-09 sobre `develop`, con una base temporal).
+
+| Caso | Resultado |
+|---|---|
+| Gráfica de asistencia | Satisfactorio |
+| Indicadores del panel | Satisfactorio |
+| Visualización general del panel | Satisfactorio |
+
 ## Errores encontrados
 
 | # | Error | Estado |
@@ -81,5 +91,6 @@ Se ejecutaron con Edge headless y un script temporal que no forma parte del repo
 
 ## Pendiente de ejecución manual
 
+- [x] Revisar en Edge la gráfica, los indicadores y la visualización general del panel.
 - [ ] Probar la gráfica en un teléfono real, tocando las barras para abrir el tooltip.
-- [ ] Probar en Chrome y Firefox. Solo se usó Edge.
+- [ ] Probar en Chrome y Firefox. Solo se usó Edge, porque no están instalados en el equipo de prueba.

@@ -5,13 +5,14 @@
 
 ## Cómo se probó
 
-Se usó un `git worktree` temporal con una rama local que no se publicó y ya se eliminó. También se usaron bases de datos temporales. No se modificaron `develop`, `main` ni `data/iglesia.db`.
+Se usaron `git worktree` temporales y bases de datos temporales. Ninguna integración se publicó. No se modificaron `develop`, `main` ni `data/iglesia.db`.
 
 | Escenario | Conflictos | Pruebas |
 |---|---|---|
 | `develop` + RF-09 + RF-08 | Ninguno | 88 de 88 aprobadas |
 | `develop` + RF-09 + RF-08 + PR #5, #9 y #11 | Ninguno | 88 de 88 aprobadas |
 | RF-08 y RF-09 en orden inverso (`git merge-tree`) | Ninguno | No aplica |
+| `develop` + RF-08 (`a74896b`) + RF-09 (`8af3df4`), aplicación en ejecución para la revisión manual | Ninguno | 88 de 88 aprobadas |
 
 Las 88 pruebas son: 17 de RF-08, 66 de RF-09 y 5 de coherencia entre ambos. Cubren RF-08, RF-09 y su coherencia, **no el funcionamiento propio de los módulos de los PR #5, #9 y #11**. El segundo escenario solo demuestra que esos PR no rompen RF-08 ni RF-09.
 
@@ -39,7 +40,7 @@ Las 88 pruebas son: 17 de RF-08, 66 de RF-09 y 5 de coherencia entre ambos. Cubr
 - Un rol ve ingresos en el panel si y solo si puede abrir el reporte de ingresos.
 - El recorrido por el panel y los reportes no registra errores del servidor.
 
-### Permisos comprobados por URL directa
+### Permisos comprobados por URL directa (pruebas automatizadas)
 
 | Rol | Miembros | Asistencia | Ministerios | Ingresos | Gráfica | Ingresos en panel |
 |---|---|---|---|---|---|---|
@@ -51,6 +52,41 @@ Las 88 pruebas son: 17 de RF-08, 66 de RF-09 y 5 de coherencia entre ambos. Cubr
 | Sin sesión | `/login` | `/login` | `/login` | `/login` | `/login` | `/login` |
 
 El Excel de cada reporte responde igual que su página.
+
+### Revisión manual de la aplicación integrada
+
+Se revisó a mano en Edge la aplicación con RF-08 y RF-09 integradas, con resultado satisfactorio:
+
+- Panel: la gráfica, los indicadores y la visualización general.
+- Reportes: la visualización en el navegador.
+- Excel: el reporte de ingresos se abrió correctamente y sus filtros funcionaron.
+
+### Comprobación en Microsoft Excel
+
+Microsoft Excel 16.0 está instalado en el equipo de prueba. Un script temporal abrió con Excel real los cuatro archivos descargados de la aplicación integrada:
+
+| Reporte | Abre sin error | Filas de datos | Filtro aplicado | Filas visibles |
+|---|---|---|---|---|
+| Miembros | Sí | 14 | Estado = Inactivo | 2 |
+| Asistencia | Sí | 11 | Tipo = culto | 6 |
+| Ministerios | Sí | 5 | Ministerio = Niños | 1 |
+| Ingresos | Sí | 11 | Concepto = diezmo | 6 |
+
+Ningún libro se marcó como reparado y la columna Total de ingresos se muestra como moneda. El detalle está en `docs/PRUEBAS_RF09.md` de la rama `feature/reportes-rf09`.
+
+## Limitaciones
+
+- **Pruebas sin ejecutar:** teléfono real, Chrome y Firefox. Chrome y Firefox no están instalados en el equipo de prueba.
+- **Excel a mano:** solo el reporte de ingresos se abrió manualmente. Los otros tres se abrieron con la prueba automatizada.
+- **Requiere internet:** sin conexión, la gráfica no aparece; se muestran el aviso y la tabla.
+- **Datos de prueba:** la gráfica y los reportes usan los datos de `seed.sql` mientras RF-03, RF-05 y RF-06 no estén en `develop`.
+- **Eventos cancelados:** las vistas de Base de datos los cuentan en algunos indicadores (ver riesgo 5).
+- **Puerto ocupado:** si el puerto ya está en uso, `src/app.js` imprime "Servidor en…" y luego se cierra sin mostrar el error. El archivo pertenece a otra parte del proyecto y no se modificó.
+
+## Decisiones de permisos por confirmar con el equipo
+
+1. **Tesorero:** no ve la gráfica ni abre los reportes de asistencia y ministerios, aunque la matriz le permite entrar a Reportes. Se siguió `docs/diagrama-er.md` y la sección Asistencias de `permisos.js`.
+2. **Secretario:** abre el reporte de ministerios según `docs/diagrama-er.md`, aunque `permisos.js` no le da acceso a la sección Ministerios.
 
 ## Qué falta integrar del equipo
 
@@ -70,8 +106,8 @@ Según el estado de `develop` y de GitHub al 2 de noviembre de 2026:
 
 1. **Módulos sin registro de datos (alto).** Sin RF-03 y RF-06, la gráfica y los reportes solo muestran los datos de `seed.sql`. Cuando se integren, hay que repetir estas pruebas con datos capturados desde la aplicación.
 2. **Internet en la presentación (medio).** Sin conexión, la gráfica no aparece. Hay que confirmar la red o decidir si se instala Chart.js localmente.
-3. **Acceso del Tesorero (medio).** La matriz le permite entrar a Reportes, pero `docs/diagrama-er.md` no le da acceso a las vistas de asistencia y ministerios. Se aplicó el documento y hace falta que el equipo lo confirme.
-4. **Acceso del Secretario a ministerios (bajo).** Puede abrir el reporte según `docs/diagrama-er.md`, aunque `permisos.js` no le da acceso a la sección Ministerios. También debe confirmarse.
+3. **Acceso del Tesorero (medio).** Ver la decisión 1 de permisos.
+4. **Acceso del Secretario a ministerios (bajo).** Ver la decisión 2 de permisos.
 5. **Eventos cancelados en vistas de Base de datos (bajo).** Con un evento cancelado que tenga asistencias, `v_indicadores_panel` lo cuenta (44 frente a 43). `v_participacion_ministerio` lo incluye en el porcentaje: se obtuvo 50 % con 0 actividades. El seed no presenta este caso.
-6. **Pruebas sin ejecutar (bajo).** Falta abrir los archivos en Microsoft Excel y probar en un teléfono real.
+6. **Pruebas sin ejecutar (bajo).** Falta probar en un teléfono real, en Chrome y en Firefox.
 7. **Pull Requests sin fusionar (medio).** RF-08 y RF-09 siguen en los PR #12 y #10, en estado de borrador. Hasta que se revisen y fusionen, `develop` no incluye estos módulos.
