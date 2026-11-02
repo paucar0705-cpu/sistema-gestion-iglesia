@@ -22,4 +22,9 @@ Comprobar:
 - Coordinador: la sección Reportes da HTTP 403.
 - Fechas de asistencia e ingresos filtran correctamente, incluso al exportar.
 - Fechas inválidas, rangos invertidos y filtros repetidos dan HTTP 422.
-- Abrir los archivos .xlsx en Microsoft Excel (pendiente de ejecutar).
+- Abrir los archivos .xlsx en Microsoft Excel:
+  * Comprobación automatizada con Microsoft Excel: los cuatro archivos se abrieron
+    correctamente, fueron reconocidos como válidos y sus filtros funcionaron.
+  * Revisión manual: la usuaria abrió el reporte de ingresos y confirmó que funciona
+    correctamente.
+  * Pendiente: abrir manualmente los reportes de miembros, asistencia y ministerios.
