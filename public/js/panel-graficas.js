@@ -29,6 +29,22 @@
     return texto.length > maximo ? `${texto.slice(0, maximo - 1)}…` : texto;
   }
 
+  // El tooltip no ajusta el texto solo: sin esto, un título largo se corta en pantallas angostas.
+  function partirEnLineas(texto, maximo) {
+    const lineas = [];
+    let actual = '';
+    texto.split(' ').forEach((palabra) => {
+      if (actual && `${actual} ${palabra}`.length > maximo) {
+        lineas.push(actual);
+        actual = palabra;
+      } else {
+        actual = actual ? `${actual} ${palabra}` : palabra;
+      }
+    });
+    if (actual) lineas.push(actual);
+    return lineas;
+  }
+
   function dataset(etiqueta, color, valores) {
     return {
       label: etiqueta,
@@ -95,7 +111,8 @@
             callbacks: {
               title: (elementos) => {
                 const e = eventos[elementos[0].dataIndex];
-                return `${e.titulo} · ${e.fecha}`;
+                const maximo = Math.floor(elementos[0].chart.width / 9);
+                return [...partirEnLineas(e.titulo, maximo), e.fecha];
               },
             },
           },
