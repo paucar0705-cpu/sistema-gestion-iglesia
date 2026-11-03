@@ -7,6 +7,8 @@ Responsable: Persona 3 (Base de datos). Si necesitas otra función o cambiar un 
 const Ministerios = require('../models/ministerios.model');
 const Donaciones  = require('../models/donaciones.model');
 const Usuarios    = require('../models/usuarios.model');
+const Anuncios    = require('../models/anuncios.model');
+const Configuracion = require('../models/configuracion.model');
 const { ErrorDatos } = require('../models/errores');
 ```
 
@@ -112,3 +114,39 @@ Notas:
 5. `POST /restablecer/:token` → validar requisitos de la contraseña y luego `Usuarios.restablecerPassword(token, nueva)`.
 
 El token dura **60 minutos** y es de **un solo uso**; si se pide otro, el anterior deja de servir.
+
+---
+
+## Anuncios (RF-07) — `src/models/anuncios.model.js`
+
+| Función | Recibe | Devuelve | Errores (`codigo`) |
+|---|---|---|---|
+| `listar()` | — | Todos (incluye programados): `id, titulo, contenido, fecha_publicacion, importante, autor_id, autor, programado, creado_en, actualizado_en` | — |
+| `obtener(id)` | id | Un anuncio o `undefined` | — |
+| `publicados(limite)` | número (por defecto 5) | Publicados hasta hoy, **importantes primero** (para el panel) | — |
+| `importantes(limite)` | número (por defecto 5) | Solo importantes publicados | — |
+| `crear(datos)` | `{ titulo, contenido, fechaPublicacion?, importante?, autorId }` | id nuevo | `TITULO_REQUERIDO`, `CONTENIDO_REQUERIDO`, `FECHA_INVALIDA`, `AUTOR_NO_VALIDO` |
+| `actualizar(id, datos)` | `{ titulo, contenido, fechaPublicacion?, importante? }` | `true` / `false` | `TITULO_REQUERIDO`, `CONTENIDO_REQUERIDO`, `FECHA_INVALIDA` |
+| `eliminar(id)` | id | `true` / `false` | — |
+
+Notas:
+- `fechaPublicacion` vacía = **hoy**. Con fecha futura el anuncio queda **programado** (`programado: 1`) y no aparece en el panel hasta ese día.
+- `importante` acepta directamente el valor de la casilla del formulario (`'on'`) o `true`/`1`. Si la casilla no se marca, llega vacío y se guarda como 0.
+- `autorId` es `req.session.usuario.id`. Al editar se conserva el autor original.
+- El panel puede usar `Anuncios.publicados(5)` en lugar de su consulta actual.
+
+---
+
+## Configuración de la iglesia (RF-10) — `src/models/configuracion.model.js`
+
+| Función | Recibe | Devuelve | Errores (`codigo`) |
+|---|---|---|---|
+| `obtener()` | — | `{ nombre, logo_ruta, direccion, telefono, correo, horarios, actualizado_en }` (siempre devuelve un objeto) | — |
+| `actualizar(datos)` | `{ nombre, logoRuta?, direccion, telefono, correo, horarios }` | Los datos ya guardados | `NOMBRE_REQUERIDO` |
+| `actualizarLogo(ruta)` | ruta pública, ej. `'/img/logo.png'` | Los datos ya guardados | — |
+
+Notas:
+- Siempre hay **un solo registro**; no hay que pasar id.
+- **El archivo del logotipo lo guarda backend** en `public/img/` (por ejemplo con multer) y al modelo solo se le pasa la ruta.
+- Si `logoRuta` **no se manda**, se conserva el logo actual, así el formulario se puede guardar sin volver a subir la imagen. Para quitarlo: `logoRuta: null`.
+- Campos vacíos se guardan como `null`.
