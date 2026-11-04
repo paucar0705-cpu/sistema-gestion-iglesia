@@ -25,3 +25,126 @@
 h1, h2 {
   font-family: var(--fuente-titulos);
 }
+
+/* ---- Fase 2: estructura (barra lateral, encabezado, login) ---- */
+
+/* estilos.css y menu-movil.css fijan el azul del menú con un hex literal
+   (#1f2a44), no con var(--primario): se anula aquí para no editar esos
+   archivos. */
+.menu,
+.js .menu__panel {
+  background: var(--aurelia-azul-profundo);
+}
+
+.aurelia-marca {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .4rem;
+  text-align: center;
+  background: var(--aurelia-champagne);
+  border-radius: var(--radio);
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+.aurelia-marca__logo { width: 56px; height: 56px; object-fit: contain; display: block; }
+.aurelia-marca__iglesia { font-size: .8rem; color: var(--aurelia-azul-profundo); }
+
+.menu nav a.activo {
+  background: var(--aurelia-marfil);
+  color: var(--aurelia-azul-profundo);
+  border-radius: 999px;
+}
+
+.aurelia-encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.aurelia-encabezado__saludo { margin: 0; font-weight: 700; color: var(--texto); font-family: var(--fuente-titulos); }
+.aurelia-encabezado__fecha { margin: .15rem 0 0; font-size: .85rem; color: var(--suave); }
+
+.aurelia-avatar {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: 50%;
+  background: var(--aurelia-dorado);
+  color: var(--aurelia-azul-profundo);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.aurelia-login { text-align: center; }
+.aurelia-login__logo { display: block; margin: 0 auto 1rem; width: 72px; height: 72px; object-fit: contain; }
+.aurelia-eslogan { color: var(--aurelia-dorado-texto); font-style: italic; margin: -.25rem 0 1rem; }
+
+/* ---- Fase 2b: correcciones de celular y calidez de marca ---- */
+
+html, body { overflow-x: clip; }
+.contenido { min-width: 0; }
+
+/* El auto-fit con un mínimo fijo puede exceder el ancho disponible en
+   contenedores angostos; min() lo acota al 100% del contenedor. */
+.indicadores { grid-template-columns: repeat(auto-fit, minmax(min(170px, 100%), 1fr)); }
+.columnas { grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); }
+.lista li { overflow-wrap: anywhere; }
+
+nav { min-height: 0; }
+.menu__usuario {
+  margin-top: auto;
+  background: rgba(255, 255, 255, .06);
+  border-radius: 10px;
+  padding: 1rem;
+  padding-bottom: calc(1rem + env(safe-area-inset-bottom) + .5rem);
+}
+
+.menu nav a { font-size: 1rem; min-height: 48px; display: flex; align-items: center; }
+
+.menu nav a.activo {
+  position: relative;
+  padding-left: calc(.75rem + 4px);
+}
+/* border-left normal seguiría la curva de la píldora (border-radius:999px)
+   y se vería como una media luna; una barra independiente evita eso. */
+.menu nav a.activo::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 25%;
+  bottom: 25%;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--aurelia-dorado);
+}
+
+.aurelia-marca__logo {
+  width: 96px;
+  height: 96px;
+  mix-blend-mode: multiply;
+}
+
+@media (max-width: 760px) {
+  .contenido { padding-inline: 1rem; }
+  .aurelia-marca__logo { width: 72px; height: 72px; }
+}
+
+@media (min-width: 761px) {
+  .menu__cabecera .menu__marca { display: none; }
+}
+
+.tarjeta {
+  border: 1px solid var(--borde);
+  box-shadow: 0 2px 8px rgba(38, 54, 74, .06);
+  transition: box-shadow .15s, transform .15s;
+}
+.indicador { border-top: 3px solid var(--aurelia-dorado); }
+
+.boton { transition: background-color .15s, transform .15s; }
+.boton:hover { transform: translateY(-1px); }
+.tarjeta:hover { box-shadow: 0 4px 14px rgba(38, 54, 74, .1); }

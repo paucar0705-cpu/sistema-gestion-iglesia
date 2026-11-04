@@ -11,6 +11,11 @@
 </head>
 <body>
 <% if (usuario) { %>
+<%
+  const aureliaFecha = new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const aureliaFechaTexto = aureliaFecha.charAt(0).toUpperCase() + aureliaFecha.slice(1);
+  const aureliaIniciales = usuario.nombre.trim().split(/\s+/).slice(0, 2).map((p) => p[0].toUpperCase()).join('');
+%>
 <div class="layout">
   <aside class="menu">
     <div class="menu__cabecera">
@@ -30,7 +35,10 @@
       </button>
     </div>
     <div class="menu__panel" id="menuPanel">
-      <div class="menu__marca menu__marca--panel"><%= iglesia.nombre %></div>
+      <div class="aurelia-marca">
+        <img src="/img/aurelia-logo.png" alt="Aurelia" width="56" height="56" class="aurelia-marca__logo">
+        <span class="aurelia-marca__iglesia"><%= iglesia.nombre %></span>
+      </div>
       <nav>
         <% menu.forEach(([clave, s]) => { %>
           <a href="<%= s.ruta %>" class="<%= rutaActual.startsWith(s.ruta) ? 'activo' : '' %>"><%= s.etiqueta %></a>
@@ -45,6 +53,13 @@
   </aside>
   <div class="menu__scrim" id="menuScrim" hidden></div>
   <main class="contenido" id="contenidoPrincipal">
+    <header class="aurelia-encabezado">
+      <div>
+        <p class="aurelia-encabezado__saludo">Bienvenido, <%= usuario.nombre %></p>
+        <p class="aurelia-encabezado__fecha"><%= aureliaFechaTexto %></p>
+      </div>
+      <div class="aurelia-avatar" aria-hidden="true"><%= aureliaIniciales %></div>
+    </header>
 <% } else { %>
 <main class="contenido contenido--solo">
 <% } %>
