@@ -3,22 +3,23 @@
    Se enlaza al final del <head>, después de estilos.css y menu-movil.css,
    para que esta cascada gane sin tener que editar esos archivos. */
 :root {
-  /* Variables existentes de estilos.css, redefinidas con la paleta Aurelia */
-  --fondo: #F7F3EA;      /* marfil */
-  --superficie: #FFFFFF; /* blanco */
-  --texto: #26364A;      /* azul profundo */
-  --suave: color-mix(in srgb, #26364A 55%, white); /* texto secundario: nunca dorado ni salvia */
-  --borde: #E7DCC9;      /* champagne */
-  --primario: #26364A;   /* azul profundo: botón principal, ya usa texto blanco */
-
-  /* Variables propias de marca, para los roles sin equivalente en estilos.css */
+  /* Paleta oficial: solo estos 6 colores base + mezclas con color-mix */
   --aurelia-marfil: #F7F3EA;
   --aurelia-champagne: #E7DCC9;
   --aurelia-azul-profundo: #26364A;
   --aurelia-dorado: #B99A63;
-  --aurelia-dorado-texto: #8A6F3A; /* único dorado válido como texto sobre fondo claro */
   --aurelia-salvia: #899B87;
-  --aurelia-marca-fondo: #F6E4C5; /* tono cálido leído del propio aurelia-logo.png */
+  --aurelia-blanco: #FFFFFF;
+
+  /* Variables existentes de estilos.css, redefinidas desde la paleta de arriba */
+  --fondo: var(--aurelia-marfil);
+  --superficie: var(--aurelia-blanco);
+  --texto: var(--aurelia-azul-profundo);
+  /* texto secundario: azul profundo aclarado, nunca dorado ni salvia como texto.
+     78% de azul da >=4.5:1 incluso sobre champagne (el fondo más claro donde se usa). */
+  --suave: color-mix(in srgb, var(--aurelia-azul-profundo) 78%, white);
+  --borde: var(--aurelia-champagne);
+  --primario: var(--aurelia-azul-profundo);
 
   --fuente-titulos: Georgia, 'Times New Roman', serif;
 }
@@ -29,12 +30,22 @@ h1, h2 {
 
 /* ---- Fase 2: estructura (barra lateral, encabezado, login) ---- */
 
-/* estilos.css y menu-movil.css fijan el azul del menú con un hex literal
-   (#1f2a44), no con var(--primario): se anula aquí para no editar esos
-   archivos. */
+/* estilos.css y menu-movil.css fijan el fondo y el texto del menú con hex
+   literales (#1f2a44, #fff, #cfd6e6, #9fb0d4), no con variables: se anula
+   todo aquí para no editar esos archivos. Menú claro: fondo champagne,
+   texto azul profundo. */
 .menu,
 .js .menu__panel {
-  background: var(--aurelia-azul-profundo);
+  background: var(--aurelia-champagne);
+  color: var(--aurelia-azul-profundo);
+  /* dorado solo (1.97:1 sobre champagne) no llega a 3:1 como borde; mezclado
+     con azul sí, y sigue leyéndose como un tono dorado/bronce. */
+  border-right: 1px solid color-mix(in srgb, var(--aurelia-azul-profundo) 40%, var(--aurelia-dorado));
+}
+
+.menu nav a:hover {
+  background: color-mix(in srgb, var(--aurelia-azul-profundo) 6%, transparent);
+  color: var(--aurelia-azul-profundo);
 }
 
 .aurelia-marca {
@@ -43,16 +54,13 @@ h1, h2 {
   align-items: center;
   gap: .4rem;
   text-align: center;
-  background: var(--aurelia-marca-fondo);
-  border-radius: var(--radio);
-  padding: 1rem;
   margin-bottom: 1.5rem;
 }
 .aurelia-marca__logo { width: 56px; height: 56px; object-fit: contain; display: block; }
 .aurelia-marca .aurelia-eslogan { font-size: .78rem; margin: 0; }
 
 .menu nav a.activo {
-  background: var(--aurelia-marfil);
+  background: color-mix(in srgb, var(--aurelia-dorado) 32%, white);
   color: var(--aurelia-azul-profundo);
   border-radius: 999px;
 }
@@ -68,7 +76,7 @@ h1, h2 {
   border-radius: 20px;
   border: 1px solid var(--aurelia-champagne);
   background: linear-gradient(135deg, var(--aurelia-marfil) 0%, var(--aurelia-champagne) 100%);
-  box-shadow: 0 4px 16px rgba(38, 54, 74, .08);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--aurelia-azul-profundo) 8%, transparent);
   padding: 1.5rem 1.75rem;
 }
 .aurelia-encabezado::before {
@@ -131,7 +139,7 @@ h1, h2 {
   display: flex;
   align-items: center;
   gap: .6rem;
-  background: #FFFFFF;
+  background: var(--superficie);
   border: 1px solid var(--aurelia-champagne);
   border-radius: 8px;
   padding: .5rem .75rem;
@@ -200,20 +208,30 @@ html, body { overflow-x: clip; }
 
 .menu__usuario {
   margin-top: auto;
-  background: rgba(255, 255, 255, .06);
+  background: var(--superficie);
+  border: 1px solid var(--aurelia-champagne);
+  color: var(--aurelia-azul-profundo);
   border-radius: 10px;
   padding: 1rem;
   padding-bottom: calc(1rem + env(safe-area-inset-bottom) + .5rem);
 }
+/* estilos.css fija #9fb0d4/#fff a mano para el menú oscuro original; se
+   anula para el menú claro. */
+.menu__usuario span { color: var(--suave); }
+.menu__usuario button { border-color: var(--aurelia-azul-profundo); color: var(--aurelia-azul-profundo); }
 
-.menu nav a { font-size: 1rem; min-height: 48px; display: flex; align-items: center; gap: .65rem; }
+/* estilos.css fija color:#cfd6e6 a mano en .menu nav a (pensado para el
+   menú oscuro original); es más específico que heredar de .menu, así que
+   se anula aquí también. */
+.menu nav a { font-size: 1rem; min-height: 48px; display: flex; align-items: center; gap: .65rem; color: var(--aurelia-azul-profundo); }
 .menu nav svg { width: 20px; height: 20px; flex-shrink: 0; }
 
 .aurelia-versiculo { display: none; }
 @media (min-width: 761px) {
   .aurelia-versiculo {
     display: block;
-    background: rgba(255, 255, 255, .06);
+    background: var(--superficie);
+    border: 1px solid var(--aurelia-champagne);
     border-radius: 10px;
     padding: .85rem 1rem;
     margin-bottom: .75rem;
@@ -223,12 +241,12 @@ html, body { overflow-x: clip; }
   .aurelia-versiculo strong {
     display: block;
     margin-bottom: .3rem;
-    color: rgba(255, 255, 255, .75);
+    color: var(--suave);
     text-transform: uppercase;
     font-size: .7rem;
     letter-spacing: .04em;
   }
-  .aurelia-versiculo p { margin: 0; color: rgba(255, 255, 255, .92); }
+  .aurelia-versiculo p { margin: 0; color: var(--aurelia-azul-profundo); }
 }
 
 .menu nav a.activo {
@@ -274,7 +292,7 @@ html, body { overflow-x: clip; }
 .tarjeta {
   border: 1px solid var(--borde);
   border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(38, 54, 74, .06);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--aurelia-azul-profundo) 6%, transparent);
   transition: box-shadow .15s, transform .15s;
 }
 .indicador { border-top: 3px solid var(--aurelia-dorado); }
@@ -297,13 +315,13 @@ html, body { overflow-x: clip; }
 
 .boton { transition: background-color .15s, transform .15s; }
 .boton:hover { transform: translateY(-1px); }
-.tarjeta:hover { box-shadow: 0 4px 14px rgba(38, 54, 74, .1); }
+.tarjeta:hover { box-shadow: 0 4px 14px color-mix(in srgb, var(--aurelia-azul-profundo) 10%, transparent); }
 
 /* ---- Fase 3 (reducida): tabla, botones, etiquetas, inputs ---- */
 
 .tabla th {
   background: var(--aurelia-azul-profundo);
-  color: #fff;
+  color: var(--superficie);
 }
 .tabla tbody tr:hover { background: var(--aurelia-marfil); }
 
@@ -313,9 +331,11 @@ html, body { overflow-x: clip; }
 .boton--secundario:hover { background: var(--aurelia-marfil); }
 
 .etiqueta--activo { background: var(--aurelia-salvia); color: var(--aurelia-azul-profundo); }
-.etiqueta--inactivo { background: var(--aurelia-champagne); color: var(--aurelia-dorado-texto); }
+/* dorado-texto (#8A6F3A) se elimina de la paleta: ya fallaba 4.5:1 sobre
+   champagne (3.51:1). Se usa el azul suave, que sí pasa (4.57:1). */
+.etiqueta--inactivo { background: var(--aurelia-champagne); color: var(--suave); }
 
 input:focus, select:focus, textarea:focus {
   border-color: var(--aurelia-dorado);
-  box-shadow: 0 0 0 3px rgba(185, 154, 99, .35);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--aurelia-dorado) 35%, transparent);
 }
