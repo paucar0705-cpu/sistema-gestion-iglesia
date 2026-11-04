@@ -49,7 +49,7 @@ h1, h2 {
   margin-bottom: 1.5rem;
 }
 .aurelia-marca__logo { width: 56px; height: 56px; object-fit: contain; display: block; }
-.aurelia-marca__iglesia { font-size: .8rem; color: var(--aurelia-azul-profundo); }
+.aurelia-marca__eslogan { font-size: .78rem; font-style: italic; color: var(--texto); }
 
 .menu nav a.activo {
   background: var(--aurelia-marfil);
@@ -58,14 +58,72 @@ h1, h2 {
 }
 
 .aurelia-encabezado {
+  position: relative;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
   margin-bottom: 1.5rem;
+  border-radius: 20px;
+  border: 1px solid var(--aurelia-champagne);
+  background: linear-gradient(135deg, var(--aurelia-marfil) 0%, var(--aurelia-champagne) 100%);
+  box-shadow: 0 4px 16px rgba(38, 54, 74, .08);
+  padding: 1.5rem 1.75rem;
 }
-.aurelia-encabezado__saludo { margin: 0; font-weight: 700; color: var(--texto); font-family: var(--fuente-titulos); }
-.aurelia-encabezado__fecha { margin: .15rem 0 0; font-size: .85rem; color: var(--suave); }
+.aurelia-encabezado::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--aurelia-dorado);
+}
+.aurelia-encabezado::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(var(--aurelia-dorado) 1px, transparent 1px);
+  background-size: 18px 18px;
+  opacity: .06;
+  pointer-events: none;
+}
+.aurelia-encabezado__texto,
+.aurelia-encabezado__extras {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+.aurelia-encabezado__iglesia {
+  margin: 0;
+  font-size: .72rem;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--suave);
+}
+.aurelia-encabezado__saludo { margin: .2rem 0 0; font-weight: 700; color: var(--texto); font-family: var(--fuente-titulos); font-size: 1.5rem; }
+.aurelia-encabezado__fecha { margin: .3rem 0 0; font-size: .85rem; color: var(--suave); }
+
+@media (max-width: 760px) {
+  .aurelia-encabezado {
+    padding: .65rem .85rem;
+    border-radius: 14px;
+    max-height: 110px;
+  }
+  .aurelia-encabezado__iglesia,
+  .aurelia-encabezado__fecha,
+  .aurelia-encabezado__extras .aurelia-reloj {
+    display: none;
+  }
+  .aurelia-encabezado__texto { flex: 1; }
+  .aurelia-encabezado__saludo {
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
 
 .aurelia-encabezado__extras { display: flex; align-items: center; gap: .75rem; flex-shrink: 0; }
 
@@ -121,7 +179,6 @@ html, body { overflow-x: clip; }
 .columnas { grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); }
 .lista li { overflow-wrap: anywhere; }
 
-nav { min-height: 0; }
 .menu__usuario {
   margin-top: auto;
   background: rgba(255, 255, 255, .06);
@@ -130,7 +187,30 @@ nav { min-height: 0; }
   padding-bottom: calc(1rem + env(safe-area-inset-bottom) + .5rem);
 }
 
-.menu nav a { font-size: 1rem; min-height: 48px; display: flex; align-items: center; }
+.menu nav a { font-size: 1rem; min-height: 48px; display: flex; align-items: center; gap: .65rem; }
+.menu nav svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+.aurelia-versiculo { display: none; }
+@media (min-width: 761px) {
+  .aurelia-versiculo {
+    display: block;
+    background: rgba(255, 255, 255, .06);
+    border-radius: 10px;
+    padding: .85rem 1rem;
+    margin-bottom: .75rem;
+    font-size: .8rem;
+    line-height: 1.4;
+  }
+  .aurelia-versiculo strong {
+    display: block;
+    margin-bottom: .3rem;
+    color: rgba(255, 255, 255, .75);
+    text-transform: uppercase;
+    font-size: .7rem;
+    letter-spacing: .04em;
+  }
+  .aurelia-versiculo p { margin: 0; color: rgba(255, 255, 255, .92); }
+}
 
 .menu nav a.activo {
   position: relative;
@@ -166,10 +246,27 @@ nav { min-height: 0; }
 
 .tarjeta {
   border: 1px solid var(--borde);
+  border-radius: 16px;
   box-shadow: 0 2px 8px rgba(38, 54, 74, .06);
   transition: box-shadow .15s, transform .15s;
 }
 .indicador { border-top: 3px solid var(--aurelia-dorado); }
+
+.aurelia-indicador-icono {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--aurelia-champagne);
+  color: var(--aurelia-azul-profundo);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: .6rem;
+}
+.aurelia-indicador-icono svg { width: 22px; height: 22px; }
+
+.columnas h2 { display: flex; align-items: center; gap: .5rem; }
+.columnas h2 svg { width: 18px; height: 18px; color: var(--aurelia-azul-profundo); flex-shrink: 0; }
 
 .boton { transition: background-color .15s, transform .15s; }
 .boton:hover { transform: translateY(-1px); }
