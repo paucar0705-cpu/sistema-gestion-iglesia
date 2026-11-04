@@ -1,7 +1,7 @@
 # Pruebas de RF-09: Reportes y exportación a Excel
 
 **Rama:** `feature/reportes-rf09` (PR #10, borrador)
-**Fecha de ejecución:** 2 de noviembre de 2026
+**Fecha de ejecución:** 2 de noviembre de 2026; repetidas el 3 de noviembre de 2026 con los datos de presentación (PR #13)
 **Entorno:** Windows 11, Node.js 24.13.0, Microsoft Edge (headless y revisión manual), Microsoft Excel 16.0
 
 ## Objetivo
@@ -26,7 +26,7 @@ No requieren dependencias nuevas ni tocan `data/iglesia.db`: cada caso usa una b
 ## Casos de prueba automatizados (`test/reportes.test.js`)
 
 Resultado sobre el código original: **56 aprobadas y 10 fallidas.**
-Resultado tras las correcciones: **66 de 66 aprobadas.** Se repitió el 2 de noviembre de 2026 con RF-08 y RF-09 integradas sobre `develop`, con el mismo resultado.
+Resultado tras las correcciones: **66 de 66 aprobadas.** Se repitió el 2 de noviembre de 2026 con RF-08 y RF-09 integradas sobre `develop`, con el mismo resultado. El 3 de noviembre de 2026 se repitió otra vez sobre el `develop` actualizado (PR #9 y #13, con los nuevos datos de `seed.sql`), con el mismo resultado: 66 de 66.
 
 | Grupo | Qué comprueba | Pruebas | Resultado |
 |---|---|---|---|
@@ -67,6 +67,29 @@ En los cuatro, ningún libro se marcó como reparado, los encabezados son correc
 
 **Revisión manual.** El reporte de ingresos se abrió correctamente en Excel y sus filtros funcionaron.
 
+La tabla anterior y la revisión manual usaron el `seed.sql` del 2 de noviembre.
+
+### Repetición con los datos de presentación (3 de noviembre de 2026)
+
+El PR #13 agregó a `seed.sql` asistencias de los eventos del 25 y 29 de octubre, seis eventos próximos y cinco donaciones de noviembre. Se repitió la prueba automatizada con Excel real sobre `develop` + RF-09 + RF-08, con una base temporal:
+
+| Reporte | Abre sin error | Filas de datos | Autofiltro | Filtro aplicado | Filas visibles |
+|---|---|---|---|---|---|
+| Miembros | Sí | 14 (sin cambio) | `A1:E15` | Estado = Inactivo | 2 |
+| Asistencia | Sí | 17 (antes 11) | `A1:G18` | Tipo = culto | 8 |
+| Ministerios | Sí | 5 (sin cambio) | `A1:E6` | Ministerio = Niños | 1 |
+| Ingresos | Sí | 16 (antes 11) | `A1:F17` | Concepto = diezmo | 9 |
+
+Ningún libro se abrió como reparado y el encabezado queda inmovilizado. En ingresos, Total conserva el formato `$#,##0.00` (por ejemplo, `$450.00`). En los cuatro reportes, la pantalla y el Excel tienen el mismo número de filas.
+
+Comprobaciones contra SQLite con los datos nuevos:
+
+- Asistencia: 17 filas, una por cada evento no cancelado: 8 con asistencia y 9 futuros o sin registros. Estos 9 (incluido el culto del 1 de noviembre, que el seed deja sin asistencia para la demostración de RF-03) aparecen con 0 registrados y "—".
+- Ingresos: 20 donaciones en 16 grupos. Noviembre de 2026 suma $3,775.00, igual que el indicador "Ingresos del mes" del panel.
+- La aplicación no registró errores del servidor.
+
+La revisión manual en Excel no se repitió con los datos nuevos.
+
 ## Errores encontrados
 
 | # | Error | Impacto | Estado |
@@ -100,5 +123,6 @@ En los cuatro, ningún libro se marcó como reparado, los encabezados son correc
 - [x] Abrir el reporte de ingresos en Excel y usar sus filtros (revisión manual).
 - [x] Revisar la visualización de los reportes en Edge (revisión manual).
 - [ ] Abrir a mano en Excel los reportes de miembros, asistencia y ministerios. Solo se abrieron con la prueba automatizada.
+- [ ] Opcional: repetir a mano en Excel el reporte de ingresos con los datos del PR #13. La prueba automatizada con Excel real ya se repitió con esos datos.
 - [ ] Revisar los reportes en un teléfono real.
 - [ ] Revisar los reportes en Chrome y Firefox. No están instalados en el equipo de prueba.
