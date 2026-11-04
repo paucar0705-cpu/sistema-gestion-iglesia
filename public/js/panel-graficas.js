@@ -84,7 +84,8 @@
             ticks: {
               color: COLOR_TEXTO,
               autoSkip: false,
-              maxRotation: 0,
+              // Chart.js solo inclina las fechas si no caben; con 8 eventos en un celular se encimaban.
+              maxRotation: 50,
               // Con espacio se muestra el evento y la fecha; en pantallas angostas, solo la fecha.
               callback(valor, indice) {
                 const fecha = this.getLabelForValue(valor);
