@@ -1,13 +1,16 @@
 /* Calendario de eventos (RF-04). Responsable: Persona 1 (Frontend) */
 :root {
-  --tipo-culto-fondo: #e8eefb;
-  --tipo-culto-texto: #3b5bab;
-  --tipo-reunion-fondo: #eae6fb;
-  --tipo-reunion-texto: #6a3fb5;
-  --tipo-actividad-fondo: #e6f4ea;
-  --tipo-actividad-texto: #2e7d32;
-  --tipo-administrativo-fondo: #fdf3e2;
-  --tipo-administrativo-texto: #9a6a0a;
+  /* Culto: salvia puro + azul da 4.16:1, no llega a 4.5:1. Aclarado 10%
+     hacia blanco (no oscurecido: oscurecer acerca el fondo al azul del
+     texto y empeora el contraste) sube a ~4.7:1, sin tocar --aurelia-salvia. */
+  --tipo-culto-fondo: color-mix(in srgb, var(--aurelia-salvia) 90%, white);
+  --tipo-culto-texto: var(--aurelia-azul-profundo);
+  --tipo-reunion-fondo: var(--aurelia-champagne);
+  --tipo-reunion-texto: var(--aurelia-azul-profundo);
+  --tipo-actividad-fondo: color-mix(in srgb, var(--aurelia-dorado) 55%, var(--aurelia-marfil));
+  --tipo-actividad-texto: var(--aurelia-azul-profundo);
+  --tipo-administrativo-fondo: var(--aurelia-marfil);
+  --tipo-administrativo-texto: var(--aurelia-azul-profundo);
 }
 
 .sr-only {
@@ -57,7 +60,7 @@
   overflow-y: auto;
 }
 .dia--vacio { background: var(--fondo); }
-.dia--hoy { background: #eef1fb; box-shadow: inset 0 0 0 2px var(--primario); }
+.dia--hoy { background: var(--aurelia-champagne); box-shadow: inset 0 0 0 2px var(--aurelia-dorado); }
 .dia__numero { display: block; font-weight: 600; font-size: .85rem; margin-bottom: .3rem; }
 
 .dia__eventos, .agenda__lista { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .4rem; }
@@ -91,7 +94,11 @@
 .etiqueta-tipo--culto { background: var(--tipo-culto-fondo); color: var(--tipo-culto-texto); }
 .etiqueta-tipo--reunion { background: var(--tipo-reunion-fondo); color: var(--tipo-reunion-texto); }
 .etiqueta-tipo--actividad { background: var(--tipo-actividad-fondo); color: var(--tipo-actividad-texto); }
-.etiqueta-tipo--administrativo { background: var(--tipo-administrativo-fondo); color: var(--tipo-administrativo-texto); }
+.etiqueta-tipo--administrativo {
+  background: var(--tipo-administrativo-fondo);
+  color: var(--tipo-administrativo-texto);
+  border: 1px solid var(--aurelia-dorado);
+}
 
 .etiqueta-cancelado {
   display: inline-block;
@@ -109,7 +116,7 @@
   border-radius: 999px;
   font-size: .7rem;
   font-weight: 600;
-  background: #eef1fb;
+  background: var(--aurelia-champagne);
   color: var(--primario);
 }
 

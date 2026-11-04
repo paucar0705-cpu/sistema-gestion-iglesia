@@ -6,8 +6,9 @@
   if (!lienzo) return;
 
   const contenedor = document.getElementById('graficaContenedor');
-  const COLOR_PRESENTES = '#3b5bab'; // --primario
-  const COLOR_AUSENTES = '#c2701f';
+  const COLOR_PRESENTES = '#B99A63'; // dorado
+  const COLOR_AUSENTES = '#899B87'; // salvia
+  const COLOR_BORDE_BARRA = '#26364A'; // azul profundo
   const COLOR_TEXTO = '#6b6f76'; // --suave
   const COLOR_LINEA = '#e2e0da'; // --borde
   const ANCHO_ETIQUETA_COMPLETA = 620;
@@ -53,8 +54,8 @@
       hoverBackgroundColor: color,
       borderRadius: { topLeft: 4, topRight: 4 },
       borderSkipped: 'bottom',
-      borderColor: 'transparent',
-      borderWidth: { left: 1, right: 1 },
+      borderColor: COLOR_BORDE_BARRA,
+      borderWidth: 1.5,
       maxBarThickness: 28,
     };
   }
