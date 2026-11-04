@@ -313,21 +313,31 @@ html, body { overflow-x: clip; }
 .columnas h2 { display: flex; align-items: center; gap: .5rem; }
 .columnas h2 svg { width: 18px; height: 18px; color: var(--aurelia-azul-profundo); flex-shrink: 0; }
 
-.boton { transition: background-color .15s, transform .15s; }
-.boton:hover { transform: translateY(-1px); }
+.boton {
+  background: var(--aurelia-dorado);
+  color: var(--aurelia-azul-profundo);
+  transition: background-color .15s, transform .15s, box-shadow .15s;
+}
+/* Dorado+azul ya está al límite de 4.5:1 (4.61:1); oscurecer el relleno en
+   hover lo baja de ese umbral. El afecto de hover se da con sombra, no color. */
+.boton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--aurelia-azul-profundo) 25%, transparent);
+}
 .tarjeta:hover { box-shadow: 0 4px 14px color-mix(in srgb, var(--aurelia-azul-profundo) 10%, transparent); }
 
 /* ---- Fase 3 (reducida): tabla, botones, etiquetas, inputs ---- */
 
 .tabla th {
-  background: var(--aurelia-azul-profundo);
-  color: var(--superficie);
+  background: var(--aurelia-champagne);
+  color: var(--aurelia-azul-profundo);
 }
 .tabla tbody tr:hover { background: var(--aurelia-marfil); }
 
-.boton:hover { background: color-mix(in srgb, var(--aurelia-azul-profundo) 82%, white); }
-
-.boton--secundario { border-color: var(--aurelia-champagne); }
+.boton--secundario {
+  border-color: var(--aurelia-dorado);
+  color: var(--aurelia-azul-profundo);
+}
 .boton--secundario:hover { background: var(--aurelia-marfil); }
 
 .etiqueta--activo { background: var(--aurelia-salvia); color: var(--aurelia-azul-profundo); }
@@ -339,3 +349,180 @@ input:focus, select:focus, textarea:focus {
   border-color: var(--aurelia-dorado);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--aurelia-dorado) 35%, transparent);
 }
+
+/* Enlaces sin clase (contenido suelto, sin estilo propio): azul con
+   subrayado, visitado igual. :where() mantiene especificidad en 0 para
+   no pisar .enlace-sutil, .accion-enlace, .menu nav a, etc. */
+a:where(:not([class])) {
+  color: var(--aurelia-azul-profundo);
+  text-decoration: underline;
+}
+a:where(:not([class])):visited {
+  color: var(--aurelia-azul-profundo);
+}
+
+/* ---- Fase 4: rediseño tipo tablero (tarjetas redondeadas, banner con paisaje,
+   menú flotante en píldoras). Solo usa la paleta Aurelia. Todo el bloque de
+   escritorio va en min-width:761px para no alterar el drawer móvil. ---- */
+
+.aurelia-banner-paisaje { display: none; }
+
+@media (min-width: 761px) {
+  body {
+    background:
+      radial-gradient(circle at 0 0, color-mix(in srgb, var(--aurelia-salvia) 18%, transparent), transparent 40%),
+      var(--aurelia-marfil);
+  }
+  .layout { gap: 1.25rem; padding: 1rem; align-items: flex-start; max-width: 1560px; margin: 0 auto; }
+
+  /* Menú flotante */
+  .menu {
+    position: sticky;
+    top: 1rem;
+    width: 248px;
+    flex-shrink: 0;
+    height: calc(100vh - 2rem);
+    overflow-y: auto;
+    border: 1px solid color-mix(in srgb, var(--aurelia-dorado) 45%, var(--aurelia-champagne));
+    border-radius: 28px;
+    padding: 1rem;
+    box-shadow: 0 6px 24px color-mix(in srgb, var(--aurelia-azul-profundo) 10%, transparent);
+  }
+  .aurelia-marca {
+    background: var(--aurelia-marfil);
+    border: 2px solid var(--aurelia-dorado);
+    border-radius: 20px;
+    padding: .75rem .75rem .9rem;
+    box-shadow: 0 3px 0 color-mix(in srgb, var(--aurelia-dorado) 55%, transparent);
+    margin-bottom: 1.1rem;
+  }
+  .aurelia-marca__logo { width: 76px; height: 76px; }
+  .aurelia-marca { margin-bottom: .75rem; padding: .6rem .6rem .7rem; }
+  .menu nav { gap: .1rem; flex: 0 0 auto; }
+  .menu nav a { min-height: 40px; }
+  .menu__usuario { margin-top: auto; padding: .75rem 1rem; }
+  .aurelia-versiculo { margin-bottom: .6rem; padding: .65rem .85rem; }
+  .menu nav a { border-radius: 999px; padding-inline: 1rem; font-weight: 600; transition: background-color .15s, box-shadow .15s; }
+  .menu nav a.activo {
+    background: var(--aurelia-blanco);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--aurelia-azul-profundo) 14%, transparent);
+  }
+  .menu nav a.activo svg { color: var(--aurelia-dorado); }
+  .aurelia-versiculo {
+    margin-top: 1rem;
+    border-radius: 18px;
+    border: 1px dashed var(--aurelia-dorado);
+    background: var(--aurelia-marfil);
+  }
+  .menu__usuario { border-radius: 18px; margin-top: .25rem; }
+
+  .contenido { max-width: none; padding: 0; flex: 1; }
+  .contenido--solo { padding: 2rem; }
+
+  /* Banner con paisaje */
+  .aurelia-encabezado {
+    min-height: 170px;
+    border-radius: 28px;
+    padding: 1.75rem 2rem 2rem;
+    min-height: 210px;
+    align-items: flex-start;
+    background: linear-gradient(90deg, var(--aurelia-marfil) 0%, var(--aurelia-champagne) 100%);
+    box-shadow: 0 6px 22px color-mix(in srgb, var(--aurelia-azul-profundo) 9%, transparent);
+  }
+  /* Foto a la derecha, desvanecida hacia el fondo para que el texto se lea */
+  .aurelia-encabezado::after {
+    content: '';
+    position: absolute;
+    inset: 0 9rem 0 auto;
+    width: 58%;
+    opacity: 1;
+    background: url('/img/banner-oracion.png') center 30% / cover no-repeat;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 45%, #000 82%, transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0%, #000 45%, #000 82%, transparent 100%);
+    pointer-events: none;
+  }
+  .aurelia-encabezado__texto { align-self: center; max-width: 45%; }
+  .aurelia-encabezado__saludo { font-size: 2.1rem; line-height: 1.15; margin-top: .25rem; }
+  .aurelia-encabezado__fecha { font-size: .95rem; }
+  .aurelia-encabezado__extras { align-items: flex-start; }
+  .aurelia-reloj {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .15rem;
+    background: color-mix(in srgb, var(--aurelia-blanco) 85%, transparent);
+    border-radius: 16px;
+    padding: .6rem .9rem;
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--aurelia-azul-profundo) 10%, transparent);
+  }
+  .aurelia-reloj__hora { border-left: 0; padding-left: 0; font-size: 1.1rem; }
+  .aurelia-avatar { width: 56px; height: 56px; min-width: 56px; border: 3px solid var(--aurelia-blanco); font-size: 1.1rem; box-shadow: 0 2px 8px color-mix(in srgb, var(--aurelia-azul-profundo) 18%, transparent); }
+
+  /* El contenido sube sobre el borde del banner, como en el diseño */
+  .aurelia-encabezado + h1 { margin: 0 0 1rem 1.25rem; font-size: 1.25rem; }
+}
+
+/* Tarjetas */
+.tarjeta {
+  border-radius: 22px;
+  background: var(--aurelia-blanco);
+  padding: 1.35rem 1.5rem;
+}
+.tarjeta h2 {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+.tarjeta h2 svg { color: var(--aurelia-dorado); }
+
+/* Indicadores como fichas con icono, tipo "Colecciones" */
+.indicadores { gap: 1rem; }
+.indicador {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas: "icono texto" "icono valor";
+  column-gap: .9rem;
+  align-items: center;
+  border-top: 1px solid var(--borde);
+  background: color-mix(in srgb, var(--aurelia-champagne) 28%, var(--aurelia-blanco));
+  padding: 1rem 1.15rem;
+}
+.indicador .aurelia-indicador-icono { grid-area: icono; margin: 0; width: 52px; height: 52px; background: var(--aurelia-blanco); border: 2px solid var(--aurelia-dorado); }
+.indicador span { grid-area: texto; align-self: end; }
+.indicador strong { grid-area: valor; align-self: start; margin-top: 0; font-family: var(--fuente-titulos); font-size: 1.7rem; }
+.indicador--dinero strong { color: var(--aurelia-azul-profundo); }
+
+/* Gráfica */
+.grafica { background: var(--aurelia-blanco); }
+.grafica__lienzo {
+  background: color-mix(in srgb, var(--aurelia-champagne) 22%, var(--aurelia-blanco));
+  border-radius: 16px;
+  padding: .75rem;
+}
+.grafica__datos summary { color: var(--aurelia-azul-profundo); font-weight: 600; }
+
+/* Listas dentro de tarjetas */
+.columnas { gap: 1.25rem; }
+.lista li {
+  border: 0;
+  background: color-mix(in srgb, var(--aurelia-champagne) 30%, var(--aurelia-blanco));
+  border-radius: 14px;
+  padding: .7rem .9rem;
+  margin-bottom: .55rem;
+}
+.lista li:last-child { margin-bottom: 0; }
+.lista li.importante { border-left: 4px solid var(--aurelia-dorado); }
+.lista li.importante strong::before { color: var(--aurelia-dorado); }
+
+/* Botones, campos y tablas más redondeados */
+.boton { border-radius: 999px; padding: .65rem 1.25rem; font-weight: 600; }
+input, select, textarea { border-radius: 12px; }
+.tabla-scroll { border-radius: 18px; border: 1px solid var(--borde); background: var(--aurelia-blanco); }
+.tabla { border: 0; }
+.tabla th:first-child { border-top-left-radius: 18px; }
+.tabla th:last-child { border-top-right-radius: 18px; }
+.calendario-tabla { border-radius: 18px; }
+.etiqueta { border-radius: 999px; }
+
+h1 { font-family: var(--fuente-titulos); }
