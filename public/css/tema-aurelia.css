@@ -1,0 +1,341 @@
+/* Tema "Aurelia". Responsable: Persona 1 (Frontend / diseño).
+   Redefine las variables de estilos.css y agrega las propias de marca.
+   Se enlaza al final del <head>, después de estilos.css y menu-movil.css,
+   para que esta cascada gane sin tener que editar esos archivos. */
+:root {
+  /* Paleta oficial: solo estos 6 colores base + mezclas con color-mix */
+  --aurelia-marfil: #F7F3EA;
+  --aurelia-champagne: #E7DCC9;
+  --aurelia-azul-profundo: #26364A;
+  --aurelia-dorado: #B99A63;
+  --aurelia-salvia: #899B87;
+  --aurelia-blanco: #FFFFFF;
+
+  /* Variables existentes de estilos.css, redefinidas desde la paleta de arriba */
+  --fondo: var(--aurelia-marfil);
+  --superficie: var(--aurelia-blanco);
+  --texto: var(--aurelia-azul-profundo);
+  /* texto secundario: azul profundo aclarado, nunca dorado ni salvia como texto.
+     78% de azul da >=4.5:1 incluso sobre champagne (el fondo más claro donde se usa). */
+  --suave: color-mix(in srgb, var(--aurelia-azul-profundo) 78%, white);
+  --borde: var(--aurelia-champagne);
+  --primario: var(--aurelia-azul-profundo);
+
+  --fuente-titulos: Georgia, 'Times New Roman', serif;
+}
+
+h1, h2 {
+  font-family: var(--fuente-titulos);
+}
+
+/* ---- Fase 2: estructura (barra lateral, encabezado, login) ---- */
+
+/* estilos.css y menu-movil.css fijan el fondo y el texto del menú con hex
+   literales (#1f2a44, #fff, #cfd6e6, #9fb0d4), no con variables: se anula
+   todo aquí para no editar esos archivos. Menú claro: fondo champagne,
+   texto azul profundo. */
+.menu,
+.js .menu__panel {
+  background: var(--aurelia-champagne);
+  color: var(--aurelia-azul-profundo);
+  /* dorado solo (1.97:1 sobre champagne) no llega a 3:1 como borde; mezclado
+     con azul sí, y sigue leyéndose como un tono dorado/bronce. */
+  border-right: 1px solid color-mix(in srgb, var(--aurelia-azul-profundo) 40%, var(--aurelia-dorado));
+}
+
+.menu nav a:hover {
+  background: color-mix(in srgb, var(--aurelia-azul-profundo) 6%, transparent);
+  color: var(--aurelia-azul-profundo);
+}
+
+.aurelia-marca {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .4rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.aurelia-marca__logo { width: 56px; height: 56px; object-fit: contain; display: block; }
+.aurelia-marca .aurelia-eslogan { font-size: .78rem; margin: 0; }
+
+.menu nav a.activo {
+  background: color-mix(in srgb, var(--aurelia-dorado) 32%, white);
+  color: var(--aurelia-azul-profundo);
+  border-radius: 999px;
+}
+
+.aurelia-encabezado {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  border-radius: 20px;
+  border: 1px solid var(--aurelia-champagne);
+  background: linear-gradient(135deg, var(--aurelia-marfil) 0%, var(--aurelia-champagne) 100%);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--aurelia-azul-profundo) 8%, transparent);
+  padding: 1.5rem 1.75rem;
+}
+.aurelia-encabezado::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--aurelia-dorado);
+}
+.aurelia-encabezado::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(var(--aurelia-dorado) 1px, transparent 1px);
+  background-size: 18px 18px;
+  opacity: .06;
+  pointer-events: none;
+}
+.aurelia-encabezado__texto,
+.aurelia-encabezado__extras {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+.aurelia-encabezado__iglesia {
+  margin: 0;
+  font-size: .72rem;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--suave);
+}
+.aurelia-encabezado__saludo { margin: .2rem 0 0; font-weight: 700; color: var(--texto); font-family: var(--fuente-titulos); font-size: 1.5rem; }
+.aurelia-encabezado__fecha { margin: .3rem 0 0; font-size: .85rem; color: var(--suave); }
+
+@media (max-width: 760px) {
+  .aurelia-encabezado {
+    padding: .65rem .85rem;
+    border-radius: 14px;
+    max-height: 110px;
+  }
+  .aurelia-encabezado__iglesia,
+  .aurelia-encabezado__fecha,
+  .aurelia-encabezado__extras .aurelia-reloj {
+    display: none;
+  }
+  .aurelia-encabezado__texto { flex: 1; }
+  .aurelia-encabezado__saludo {
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.aurelia-encabezado__extras { display: flex; align-items: center; gap: .75rem; flex-shrink: 0; }
+
+.aurelia-reloj {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  background: var(--superficie);
+  border: 1px solid var(--aurelia-champagne);
+  border-radius: 8px;
+  padding: .5rem .75rem;
+  font-size: .85rem;
+  color: var(--aurelia-azul-profundo);
+  white-space: nowrap;
+}
+.aurelia-reloj__hora {
+  font-weight: 700;
+  padding-left: .6rem;
+  border-left: 3px solid var(--aurelia-dorado);
+}
+
+@media (max-width: 760px) {
+  .aurelia-reloj__fecha { display: none; }
+  .aurelia-reloj { padding: .35rem .6rem; gap: 0; }
+}
+
+.aurelia-avatar {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: 50%;
+  background: var(--aurelia-dorado);
+  color: var(--aurelia-azul-profundo);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.aurelia-login { text-align: center; }
+.aurelia-login__logo { display: block; margin: 0 auto 1rem; width: 160px; height: 160px; object-fit: contain; }
+.aurelia-eslogan {
+  font-family: var(--fuente-titulos);
+  font-style: italic;
+  color: var(--texto);
+  font-size: 1.15rem;
+  margin: 0 0 1rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  .aurelia-login__logo { width: 128px; height: 128px; }
+}
+
+/* ---- Fase 2b: correcciones de celular y calidez de marca ---- */
+
+html, body { overflow-x: clip; }
+.contenido { min-width: 0; }
+
+/* El auto-fit con un mínimo fijo puede exceder el ancho disponible en
+   contenedores angostos; min() lo acota al 100% del contenedor. */
+.indicadores { grid-template-columns: repeat(auto-fit, minmax(min(170px, 100%), 1fr)); }
+.columnas { grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); }
+.lista li { overflow-wrap: anywhere; }
+
+.menu__usuario {
+  margin-top: auto;
+  background: var(--superficie);
+  border: 1px solid var(--aurelia-champagne);
+  color: var(--aurelia-azul-profundo);
+  border-radius: 10px;
+  padding: 1rem;
+  padding-bottom: calc(1rem + env(safe-area-inset-bottom) + .5rem);
+}
+/* estilos.css fija #9fb0d4/#fff a mano para el menú oscuro original; se
+   anula para el menú claro. */
+.menu__usuario span { color: var(--suave); }
+.menu__usuario button { border-color: var(--aurelia-azul-profundo); color: var(--aurelia-azul-profundo); }
+
+/* estilos.css fija color:#cfd6e6 a mano en .menu nav a (pensado para el
+   menú oscuro original); es más específico que heredar de .menu, así que
+   se anula aquí también. */
+.menu nav a { font-size: 1rem; min-height: 48px; display: flex; align-items: center; gap: .65rem; color: var(--aurelia-azul-profundo); }
+.menu nav svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+.aurelia-versiculo { display: none; }
+@media (min-width: 761px) {
+  .aurelia-versiculo {
+    display: block;
+    background: var(--superficie);
+    border: 1px solid var(--aurelia-champagne);
+    border-radius: 10px;
+    padding: .85rem 1rem;
+    margin-bottom: .75rem;
+    font-size: .8rem;
+    line-height: 1.4;
+  }
+  .aurelia-versiculo strong {
+    display: block;
+    margin-bottom: .3rem;
+    color: var(--suave);
+    text-transform: uppercase;
+    font-size: .7rem;
+    letter-spacing: .04em;
+  }
+  .aurelia-versiculo p { margin: 0; color: var(--aurelia-azul-profundo); }
+}
+
+.menu nav a.activo {
+  position: relative;
+  padding-left: calc(.75rem + 4px);
+}
+/* border-left normal seguiría la curva de la píldora (border-radius:999px)
+   y se vería como una media luna; una barra independiente evita eso. */
+.menu nav a.activo::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 25%;
+  bottom: 25%;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--aurelia-dorado);
+}
+
+.aurelia-marca__logo {
+  width: 130px;
+  height: 130px;
+  mix-blend-mode: multiply;
+}
+
+@media (max-width: 760px) {
+  .contenido { padding-inline: 1rem; }
+  .aurelia-marca__logo { width: 96px; height: 96px; }
+}
+
+/* Viewports móviles bajos (celular en horizontal, barras del navegador
+   visibles): el drawer tiene menos alto disponible, así que el logo se
+   reduce para no empujar "Cerrar sesión" fuera de vista. */
+@media (max-width: 760px) and (max-height: 700px) {
+  .aurelia-marca__logo { width: 80px; height: 80px; }
+  .aurelia-marca { padding: .75rem; margin-bottom: 1rem; }
+}
+
+@media (min-width: 761px) {
+  .menu__cabecera .menu__marca { display: none; }
+}
+
+.tarjeta {
+  border: 1px solid var(--borde);
+  border-radius: 16px;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--aurelia-azul-profundo) 6%, transparent);
+  transition: box-shadow .15s, transform .15s;
+}
+.indicador { border-top: 3px solid var(--aurelia-dorado); }
+
+.aurelia-indicador-icono {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--aurelia-champagne);
+  color: var(--aurelia-azul-profundo);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: .6rem;
+}
+.aurelia-indicador-icono svg { width: 22px; height: 22px; }
+
+.columnas h2 { display: flex; align-items: center; gap: .5rem; }
+.columnas h2 svg { width: 18px; height: 18px; color: var(--aurelia-azul-profundo); flex-shrink: 0; }
+
+.boton { transition: background-color .15s, transform .15s; }
+.boton:hover { transform: translateY(-1px); }
+.tarjeta:hover { box-shadow: 0 4px 14px color-mix(in srgb, var(--aurelia-azul-profundo) 10%, transparent); }
+
+/* ---- Fase 3 (reducida): tabla, botones, etiquetas, inputs ---- */
+
+.tabla th {
+  background: var(--aurelia-azul-profundo);
+  color: var(--superficie);
+}
+.tabla tbody tr:hover { background: var(--aurelia-marfil); }
+
+.boton:hover { background: color-mix(in srgb, var(--aurelia-azul-profundo) 82%, white); }
+
+.boton--secundario { border-color: var(--aurelia-champagne); }
+.boton--secundario:hover { background: var(--aurelia-marfil); }
+
+.etiqueta--activo { background: var(--aurelia-salvia); color: var(--aurelia-azul-profundo); }
+/* dorado-texto (#8A6F3A) se elimina de la paleta: ya fallaba 4.5:1 sobre
+   champagne (3.51:1). Se usa el azul suave, que sí pasa (4.57:1). */
+.etiqueta--inactivo { background: var(--aurelia-champagne); color: var(--suave); }
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--aurelia-dorado);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--aurelia-dorado) 35%, transparent);
+}

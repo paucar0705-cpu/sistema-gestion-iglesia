@@ -87,3 +87,20 @@ input[aria-invalid="true"] { border-color: var(--alerta); }
 .formulario-ancho form { display: flex; flex-direction: column; gap: 1rem; }
 .acciones-formulario { display: flex; gap: .75rem; }
 .boton--secundario { background: none; border: 1px solid var(--borde); color: var(--texto); }
+
+/* ---- Panel: gráfica de asistencia (RF-08) ---- */
+.grafica { margin-bottom: 1.5rem; }
+.grafica .sub { margin: 0; }
+.grafica .alerta { margin: 1rem 0 0; }
+.grafica__sub { font-size: .9rem; }
+/* El canvas va absoluto para que su ancho no impida que la tarjeta se encoja al cambiar el tamaño. */
+.grafica__lienzo { position: relative; height: 320px; margin-top: 1rem; }
+.grafica__lienzo[hidden] { display: none; }
+.grafica__lienzo canvas { position: absolute; inset: 0; }
+.grafica__datos { margin-top: 1rem; font-size: .9rem; }
+.grafica__datos summary { color: var(--primario); cursor: pointer; }
+.grafica__datos .tabla-scroll { margin-top: .75rem; }
+.grafica__datos .tabla td:first-child { white-space: normal; }
+@media (max-width: 760px) {
+  .grafica__lienzo { height: 260px; }
+}
