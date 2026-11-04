@@ -67,6 +67,31 @@ h1, h2 {
 .aurelia-encabezado__saludo { margin: 0; font-weight: 700; color: var(--texto); font-family: var(--fuente-titulos); }
 .aurelia-encabezado__fecha { margin: .15rem 0 0; font-size: .85rem; color: var(--suave); }
 
+.aurelia-encabezado__extras { display: flex; align-items: center; gap: .75rem; flex-shrink: 0; }
+
+.aurelia-reloj {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  background: #FFFFFF;
+  border: 1px solid var(--aurelia-champagne);
+  border-radius: 8px;
+  padding: .5rem .75rem;
+  font-size: .85rem;
+  color: var(--aurelia-azul-profundo);
+  white-space: nowrap;
+}
+.aurelia-reloj__hora {
+  font-weight: 700;
+  padding-left: .6rem;
+  border-left: 3px solid var(--aurelia-dorado);
+}
+
+@media (max-width: 760px) {
+  .aurelia-reloj__fecha { display: none; }
+  .aurelia-reloj { padding: .35rem .6rem; gap: 0; }
+}
+
 .aurelia-avatar {
   width: 44px;
   height: 44px;

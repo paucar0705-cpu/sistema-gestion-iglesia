@@ -7,14 +7,19 @@
   <link rel="stylesheet" href="/css/estilos.css">
   <link rel="stylesheet" href="/css/menu-movil.css">
   <link rel="stylesheet" href="/css/tema-aurelia.css">
+  <script defer src="/js/reloj.js"></script>
   <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
 <% if (usuario) { %>
 <%
-  const aureliaFecha = new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const aureliaAhora = new Date();
+  const aureliaFecha = aureliaAhora.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   const aureliaFechaTexto = aureliaFecha.charAt(0).toUpperCase() + aureliaFecha.slice(1);
   const aureliaIniciales = usuario.nombre.trim().split(/\s+/).slice(0, 2).map((p) => p[0].toUpperCase()).join('');
+  const aureliaMeses = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+  const aureliaFechaCorta = `${aureliaAhora.getDate()} ${aureliaMeses[aureliaAhora.getMonth()]} ${aureliaAhora.getFullYear()}`;
+  const aureliaHoraCorta = aureliaAhora.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: false });
 %>
 <div class="layout">
   <aside class="menu">
@@ -58,7 +63,13 @@
         <p class="aurelia-encabezado__saludo">Bienvenido, <%= usuario.nombre %></p>
         <p class="aurelia-encabezado__fecha"><%= aureliaFechaTexto %></p>
       </div>
-      <div class="aurelia-avatar" aria-hidden="true"><%= aureliaIniciales %></div>
+      <div class="aurelia-encabezado__extras">
+        <div class="aurelia-reloj">
+          <span class="aurelia-reloj__fecha"><%= aureliaFechaCorta %></span>
+          <time class="aurelia-reloj__hora" id="aureliaHora" datetime="<%= aureliaHoraCorta %>"><%= aureliaHoraCorta %></time>
+        </div>
+        <div class="aurelia-avatar" aria-hidden="true"><%= aureliaIniciales %></div>
+      </div>
     </header>
 <% } else { %>
 <main class="contenido contenido--solo">
