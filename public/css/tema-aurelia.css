@@ -1,0 +1,27 @@
+/* Tema "Aurelia". Responsable: Persona 1 (Frontend / diseño).
+   Redefine las variables de estilos.css y agrega las propias de marca.
+   Se enlaza al final del <head>, después de estilos.css y menu-movil.css,
+   para que esta cascada gane sin tener que editar esos archivos. */
+:root {
+  /* Variables existentes de estilos.css, redefinidas con la paleta Aurelia */
+  --fondo: #F7F3EA;      /* marfil */
+  --superficie: #FFFFFF; /* blanco */
+  --texto: #26364A;      /* azul profundo */
+  --suave: color-mix(in srgb, #26364A 55%, white); /* texto secundario: nunca dorado ni salvia */
+  --borde: #E7DCC9;      /* champagne */
+  --primario: #26364A;   /* azul profundo: botón principal, ya usa texto blanco */
+
+  /* Variables propias de marca, para los roles sin equivalente en estilos.css */
+  --aurelia-marfil: #F7F3EA;
+  --aurelia-champagne: #E7DCC9;
+  --aurelia-azul-profundo: #26364A;
+  --aurelia-dorado: #B99A63;
+  --aurelia-dorado-texto: #8A6F3A; /* único dorado válido como texto sobre fondo claro */
+  --aurelia-salvia: #899B87;
+
+  --fuente-titulos: Georgia, 'Times New Roman', serif;
+}
+
+h1, h2 {
+  font-family: var(--fuente-titulos);
+}
