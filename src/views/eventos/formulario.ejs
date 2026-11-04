@@ -1,0 +1,92 @@
+<%
+  const esEdicion = Boolean(evento && evento.id);
+  const mesCancelar = esEdicion
+    ? evento.fecha.slice(0, 7)
+    : new Date().toLocaleDateString('en-CA').slice(0, 7);
+  const tipos = [
+    { valor: 'culto', etiqueta: 'Culto' },
+    { valor: 'reunion', etiqueta: 'Reunión' },
+    { valor: 'actividad', etiqueta: 'Actividad' },
+    { valor: 'administrativo', etiqueta: 'Administrativo' },
+  ];
+%>
+<%- include('../partials/header', { titulo: esEdicion ? 'Editar evento' : 'Nuevo evento' }) %>
+<link rel="stylesheet" href="/css/eventos.css">
+
+<h1><%= esEdicion ? 'Editar evento' : 'Nuevo evento' %></h1>
+
+<section class="tarjeta formulario-evento">
+  <p id="mensajeError" class="alerta" role="alert"<% if (!errores.length) { %> hidden<% } %>><%= errores.join(' ') %></p>
+
+  <% if (evento && evento.estado === 'cancelado') { %>
+    <p class="aviso aviso--cancelado">Este evento está cancelado. Puedes editar sus datos, pero seguirá marcado como cancelado.</p>
+  <% } %>
+
+  <form id="formEvento" method="POST" action="<%= esEdicion ? '/eventos/' + evento.id : '/eventos' %>" novalidate>
+    <label>Título*
+      <input type="text" name="titulo" id="titulo" maxlength="150" value="<%= evento ? evento.titulo : '' %>" required>
+    </label>
+
+    <label>Tipo*
+      <select name="tipo" id="tipo" required>
+        <option value="">Selecciona un tipo</option>
+        <% tipos.forEach((t) => { %>
+          <option value="<%= t.valor %>" <%= evento && evento.tipo === t.valor ? 'selected' : '' %>><%= t.etiqueta %></option>
+        <% }) %>
+      </select>
+    </label>
+
+    <label>Fecha*
+      <input type="date" name="fecha" id="fecha" value="<%= evento ? evento.fecha : new Date().toLocaleDateString('en-CA') %>" required>
+    </label>
+
+    <label>Hora
+      <input type="time" name="hora" id="hora" value="<%= evento ? (evento.hora || '') : '' %>">
+    </label>
+
+    <label>Lugar
+      <input type="text" name="lugar" id="lugar" maxlength="200" value="<%= evento ? (evento.lugar || '') : '' %>">
+    </label>
+
+    <label>Descripción
+      <textarea name="descripcion" id="descripcion" maxlength="2000" rows="4"><%= evento ? (evento.descripcion || '') : '' %></textarea>
+    </label>
+
+    <label>Responsable
+      <select name="responsable_id" id="responsable_id">
+        <option value="">Sin responsable</option>
+        <% responsables.forEach((r) => { %>
+          <option value="<%= r.id %>" <%= evento && String(evento.responsable_id) === String(r.id) ? 'selected' : '' %>><%= r.nombre %> <%= r.apellidos || '' %></option>
+        <% }) %>
+      </select>
+    </label>
+
+    <label>Ministerio
+      <select name="ministerio_id" id="ministerio_id">
+        <option value="">Sin ministerio</option>
+        <% ministerios.forEach((m) => { %>
+          <option value="<%= m.id %>" <%= evento && String(evento.ministerio_id) === String(m.id) ? 'selected' : '' %>><%= m.nombre %></option>
+        <% }) %>
+      </select>
+    </label>
+
+    <p class="sub">* Campos obligatorios</p>
+
+    <div class="acciones-formulario">
+      <button type="submit" class="boton">Guardar</button>
+      <a class="boton boton--secundario" href="/eventos?mes=<%= mesCancelar %>">Cancelar</a>
+    </div>
+  </form>
+</section>
+
+<script src="/js/formularios.js"></script>
+<script>
+  (function () {
+    validarFormulario(document.querySelector('#formEvento'), [
+      { selector: '#titulo', validar: (valor) => valor === '', mensaje: 'El título es obligatorio.' },
+      { selector: '#tipo', validar: (valor) => valor === '', mensaje: 'El tipo de evento es obligatorio.' },
+      { selector: '#fecha', validar: (valor) => valor === '', mensaje: 'La fecha es obligatoria.' },
+    ]);
+  })();
+</script>
+<%- include('../partials/footer') %>
