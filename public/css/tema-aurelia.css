@@ -18,6 +18,7 @@
   --aurelia-dorado: #B99A63;
   --aurelia-dorado-texto: #8A6F3A; /* único dorado válido como texto sobre fondo claro */
   --aurelia-salvia: #899B87;
+  --aurelia-marca-fondo: #F6E4C5; /* tono cálido leído del propio aurelia-logo.png */
 
   --fuente-titulos: Georgia, 'Times New Roman', serif;
 }
@@ -42,7 +43,7 @@ h1, h2 {
   align-items: center;
   gap: .4rem;
   text-align: center;
-  background: var(--aurelia-champagne);
+  background: var(--aurelia-marca-fondo);
   border-radius: var(--radio);
   padding: 1rem;
   margin-bottom: 1.5rem;
@@ -148,3 +149,24 @@ nav { min-height: 0; }
 .boton { transition: background-color .15s, transform .15s; }
 .boton:hover { transform: translateY(-1px); }
 .tarjeta:hover { box-shadow: 0 4px 14px rgba(38, 54, 74, .1); }
+
+/* ---- Fase 3 (reducida): tabla, botones, etiquetas, inputs ---- */
+
+.tabla th {
+  background: var(--aurelia-azul-profundo);
+  color: #fff;
+}
+.tabla tbody tr:hover { background: var(--aurelia-marfil); }
+
+.boton:hover { background: color-mix(in srgb, var(--aurelia-azul-profundo) 82%, white); }
+
+.boton--secundario { border-color: var(--aurelia-champagne); }
+.boton--secundario:hover { background: var(--aurelia-marfil); }
+
+.etiqueta--activo { background: var(--aurelia-salvia); color: var(--aurelia-azul-profundo); }
+.etiqueta--inactivo { background: var(--aurelia-champagne); color: var(--aurelia-dorado-texto); }
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--aurelia-dorado);
+  box-shadow: 0 0 0 3px rgba(185, 154, 99, .35);
+}

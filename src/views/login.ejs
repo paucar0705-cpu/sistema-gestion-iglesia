@@ -1,6 +1,8 @@
 <%- include('partials/header', { titulo: 'Iniciar sesión' }) %>
-<section class="tarjeta login">
+<section class="tarjeta login aurelia-login">
+  <img src="/img/aurelia-logo.png" alt="Aurelia" width="72" height="72" class="aurelia-login__logo">
   <h1><%= iglesia.nombre %></h1>
+  <%- include('partials/eslogan') %>
   <p class="sub">Inicia sesión para continuar</p>
   <p id="mensajeError" class="alerta" role="alert"<% if (!error) { %> hidden<% } %>><%= error || '' %></p>
   <form method="POST" action="/login" novalidate>
