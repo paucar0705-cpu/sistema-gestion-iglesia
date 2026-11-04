@@ -1,7 +1,7 @@
 <%- include('partials/header', { titulo: 'Iniciar sesión' }) %>
 <section class="tarjeta login aurelia-login">
-  <img src="/img/aurelia-logo.png" alt="Aurelia" width="72" height="72" class="aurelia-login__logo">
-  <h1><%= iglesia.nombre %></h1>
+  <h1 class="sr-only">Aurelia, Sistema de Gestión de Iglesias</h1>
+  <img src="/img/aurelia-logo.png" alt="Aurelia" width="160" height="160" class="aurelia-login__logo">
   <%- include('partials/eslogan') %>
   <p class="sub">Inicia sesión para continuar</p>
   <p id="mensajeError" class="alerta" role="alert"<% if (!error) { %> hidden<% } %>><%= error || '' %></p>
