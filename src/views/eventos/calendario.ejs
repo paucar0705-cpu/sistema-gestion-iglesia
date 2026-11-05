@@ -1,0 +1,178 @@
+<%- include('../partials/header', { titulo: 'Eventos' }) %>
+<link rel="stylesheet" href="/css/eventos.css">
+
+<%
+  const [anioStr, mesStr] = mes.split('-');
+  const anio = Number(anioStr);
+  const mesNum = Number(mesStr);
+
+  const nombresMes = [
+    'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+    'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre',
+  ];
+  const nombresDiaSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+  const etiquetasTipo = {
+    culto: 'Culto',
+    reunion: 'Reunión',
+    actividad: 'Actividad',
+    administrativo: 'Administrativo',
+  };
+
+  const tituloMes = `${nombresMes[mesNum - 1][0].toUpperCase()}${nombresMes[mesNum - 1].slice(1)} ${anio}`;
+
+  // Mes anterior / siguiente por aritmética de enteros: evita construir fechas y corrimientos de zona horaria.
+  let anioAnterior = anio;
+  let mesAnterior = mesNum - 1;
+  if (mesAnterior < 1) { mesAnterior = 12; anioAnterior -= 1; }
+  let anioSiguiente = anio;
+  let mesSiguiente = mesNum + 1;
+  if (mesSiguiente > 12) { mesSiguiente = 1; anioSiguiente += 1; }
+  const mesAnteriorStr = `${anioAnterior}-${String(mesAnterior).padStart(2, '0')}`;
+  const mesSiguienteStr = `${anioSiguiente}-${String(mesSiguiente).padStart(2, '0')}`;
+
+  const hoyServidor = new Date();
+  const hoyStr = `${hoyServidor.getFullYear()}-${String(hoyServidor.getMonth() + 1).padStart(2, '0')}-${String(hoyServidor.getDate()).padStart(2, '0')}`;
+  const mesHoyStr = hoyStr.slice(0, 7);
+
+  // Cuadrícula del mes calculada en UTC a propósito: con fechas sin hora, usar Date local
+  // puede correr el día de la semana según el huso horario del servidor.
+  const diasEnMes = new Date(Date.UTC(anio, mesNum, 0)).getUTCDate();
+  const primerDiaSemanaUTC = new Date(Date.UTC(anio, mesNum - 1, 1)).getUTCDay(); // 0=domingo..6=sábado
+  const offsetLunes = (primerDiaSemanaUTC + 6) % 7; // nº de celdas vacías antes del día 1 (semana inicia lunes)
+
+  function nombreDiaSemana(fechaISO) {
+    const [a, m, d] = fechaISO.split('-').map(Number);
+    const diaUTC = new Date(Date.UTC(a, m - 1, d)).getUTCDay();
+    return nombresDiaSemana[(diaUTC + 6) % 7];
+  }
+
+  const eventosPorDia = {};
+  eventos.forEach((evento) => {
+    (eventosPorDia[evento.fecha] = eventosPorDia[evento.fecha] || []).push(evento);
+  });
+
+  const celdas = [];
+  for (let i = 0; i < offsetLunes; i += 1) celdas.push(null);
+  for (let dia = 1; dia <= diasEnMes; dia += 1) {
+    const fecha = `${anio}-${String(mesNum).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+    celdas.push({ dia, fecha, eventos: eventosPorDia[fecha] || [], esHoy: fecha === hoyStr });
+  }
+  while (celdas.length % 7 !== 0) celdas.push(null);
+
+  const semanas = [];
+  for (let i = 0; i < celdas.length; i += 7) semanas.push(celdas.slice(i, i + 7));
+
+  const diasConEventos = celdas.filter((celda) => celda && celda.eventos.length);
+%>
+
+<section class="calendario">
+  <div class="calendario__cabecera">
+    <h1><%= tituloMes %></h1>
+    <nav class="calendario__nav" aria-label="Navegación de meses">
+      <a class="boton boton--secundario" href="/eventos?mes=<%= mesAnteriorStr %>" aria-label="Ir al mes anterior">Anterior</a>
+      <a class="boton boton--secundario" href="/eventos?mes=<%= mesHoyStr %>" aria-label="Ir al mes actual">Hoy</a>
+      <a class="boton boton--secundario" href="/eventos?mes=<%= mesSiguienteStr %>" aria-label="Ir al mes siguiente">Siguiente</a>
+    </nav>
+    <% if (puedeEditar) { %>
+      <a class="boton boton--nuevo" href="/eventos/nuevo">Nuevo evento</a>
+    <% } %>
+  </div>
+
+  <% if (!eventos.length) { %>
+    <p class="sub">No hay eventos programados para <%= tituloMes %>.</p>
+  <% } %>
+
+  <div class="calendario-tabla-contenedor">
+    <table class="calendario-tabla">
+      <caption class="sr-only">Calendario de eventos de <%= tituloMes %></caption>
+      <thead>
+        <tr>
+          <% nombresDiaSemana.forEach((nombreDia) => { %>
+            <th scope="col"><%= nombreDia %></th>
+          <% }) %>
+        </tr>
+      </thead>
+      <tbody>
+        <% semanas.forEach((semana) => { %>
+          <tr>
+            <% semana.forEach((celda) => { %>
+              <% if (!celda) { %>
+                <td class="dia dia--vacio" aria-hidden="true"></td>
+              <% } else { %>
+                <td class="dia <%= celda.esHoy ? 'dia--hoy' : '' %>">
+                  <span class="dia__numero"><%= celda.dia %></span>
+                  <% if (celda.eventos.length) { %>
+                    <ul class="dia__eventos">
+                      <% celda.eventos.forEach((evento) => { %>
+                        <li class="evento <%= evento.estado === 'cancelado' ? 'evento--cancelado' : '' %>">
+                          <div class="evento__linea">
+                            <% if (evento.hora) { %><span class="evento__hora"><%= evento.hora %></span><% } %>
+                            <span class="evento__titulo"><%= evento.titulo %></span>
+                          </div>
+                          <div class="evento__etiquetas">
+                            <span class="etiqueta-tipo etiqueta-tipo--<%= evento.tipo %>"><%= etiquetasTipo[evento.tipo] || evento.tipo %></span>
+                            <% if (evento.estado === 'cancelado') { %><span class="etiqueta-cancelado">Cancelado</span><% } %>
+                          </div>
+                          <% if (evento.lugar) { %><div class="evento__lugar"><%= evento.lugar %></div><% } %>
+                          <% if (puedeEditar && evento.estado !== 'cancelado') { %>
+                            <div class="evento__acciones">
+                              <a class="accion-enlace" href="/eventos/<%= evento.id %>/editar">Editar</a>
+                              <form method="POST" action="/eventos/<%= evento.id %>/cancelar" class="form-cancelar-evento" data-nombre="<%= evento.titulo %>">
+                                <button type="submit" class="accion-boton">Cancelar</button>
+                              </form>
+                            </div>
+                          <% } %>
+                        </li>
+                      <% }) %>
+                    </ul>
+                  <% } %>
+                </td>
+              <% } %>
+            <% }) %>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="agenda">
+    <% if (!diasConEventos.length) { %>
+      <p class="sub">No hay eventos programados para <%= tituloMes %>.</p>
+    <% } else { %>
+      <% diasConEventos.forEach((celda) => { %>
+        <section class="agenda__dia">
+          <h2 class="agenda__fecha">
+            <%= nombreDiaSemana(celda.fecha) %> <%= celda.dia %> de <%= nombresMes[mesNum - 1] %>
+            <% if (celda.esHoy) { %><span class="etiqueta-hoy">Hoy</span><% } %>
+          </h2>
+          <ul class="agenda__lista">
+            <% celda.eventos.forEach((evento) => { %>
+              <li class="evento <%= evento.estado === 'cancelado' ? 'evento--cancelado' : '' %>">
+                <div class="evento__linea">
+                  <% if (evento.hora) { %><span class="evento__hora"><%= evento.hora %></span><% } %>
+                  <span class="evento__titulo"><%= evento.titulo %></span>
+                </div>
+                <div class="evento__etiquetas">
+                  <span class="etiqueta-tipo etiqueta-tipo--<%= evento.tipo %>"><%= etiquetasTipo[evento.tipo] || evento.tipo %></span>
+                  <% if (evento.estado === 'cancelado') { %><span class="etiqueta-cancelado">Cancelado</span><% } %>
+                </div>
+                <% if (evento.lugar) { %><div class="evento__lugar"><%= evento.lugar %></div><% } %>
+                <% if (puedeEditar && evento.estado !== 'cancelado') { %>
+                  <div class="evento__acciones">
+                    <a class="accion-enlace" href="/eventos/<%= evento.id %>/editar">Editar</a>
+                    <form method="POST" action="/eventos/<%= evento.id %>/cancelar" class="form-cancelar-evento" data-nombre="<%= evento.titulo %>">
+                      <button type="submit" class="accion-boton">Cancelar</button>
+                    </form>
+                  </div>
+                <% } %>
+              </li>
+            <% }) %>
+          </ul>
+        </section>
+      <% }) %>
+    <% } %>
+  </div>
+</section>
+
+<script src="/js/eventos.js"></script>
+<%- include('../partials/footer') %>

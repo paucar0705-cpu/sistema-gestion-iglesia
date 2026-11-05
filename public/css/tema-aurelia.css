@@ -1,0 +1,528 @@
+/* Tema "Aurelia". Responsable: Persona 1 (Frontend / diseño).
+   Redefine las variables de estilos.css y agrega las propias de marca.
+   Se enlaza al final del <head>, después de estilos.css y menu-movil.css,
+   para que esta cascada gane sin tener que editar esos archivos. */
+:root {
+  /* Paleta oficial: solo estos 6 colores base + mezclas con color-mix */
+  --aurelia-marfil: #F7F3EA;
+  --aurelia-champagne: #E7DCC9;
+  --aurelia-azul-profundo: #26364A;
+  --aurelia-dorado: #B99A63;
+  --aurelia-salvia: #899B87;
+  --aurelia-blanco: #FFFFFF;
+
+  /* Variables existentes de estilos.css, redefinidas desde la paleta de arriba */
+  --fondo: var(--aurelia-marfil);
+  --superficie: var(--aurelia-blanco);
+  --texto: var(--aurelia-azul-profundo);
+  /* texto secundario: azul profundo aclarado, nunca dorado ni salvia como texto.
+     78% de azul da >=4.5:1 incluso sobre champagne (el fondo más claro donde se usa). */
+  --suave: color-mix(in srgb, var(--aurelia-azul-profundo) 78%, white);
+  --borde: var(--aurelia-champagne);
+  --primario: var(--aurelia-azul-profundo);
+
+  --fuente-titulos: Georgia, 'Times New Roman', serif;
+}
+
+h1, h2 {
+  font-family: var(--fuente-titulos);
+}
+
+/* ---- Fase 2: estructura (barra lateral, encabezado, login) ---- */
+
+/* estilos.css y menu-movil.css fijan el fondo y el texto del menú con hex
+   literales (#1f2a44, #fff, #cfd6e6, #9fb0d4), no con variables: se anula
+   todo aquí para no editar esos archivos. Menú claro: fondo champagne,
+   texto azul profundo. */
+.menu,
+.js .menu__panel {
+  background: var(--aurelia-champagne);
+  color: var(--aurelia-azul-profundo);
+  /* dorado solo (1.97:1 sobre champagne) no llega a 3:1 como borde; mezclado
+     con azul sí, y sigue leyéndose como un tono dorado/bronce. */
+  border-right: 1px solid color-mix(in srgb, var(--aurelia-azul-profundo) 40%, var(--aurelia-dorado));
+}
+
+.menu nav a:hover {
+  background: color-mix(in srgb, var(--aurelia-azul-profundo) 6%, transparent);
+  color: var(--aurelia-azul-profundo);
+}
+
+.aurelia-marca {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .4rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.aurelia-marca__logo { width: 56px; height: 56px; object-fit: contain; display: block; }
+.aurelia-marca .aurelia-eslogan { font-size: .78rem; margin: 0; }
+
+.menu nav a.activo {
+  background: color-mix(in srgb, var(--aurelia-dorado) 32%, white);
+  color: var(--aurelia-azul-profundo);
+  border-radius: 999px;
+}
+
+.aurelia-encabezado {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  border-radius: 20px;
+  border: 1px solid var(--aurelia-champagne);
+  background: linear-gradient(135deg, var(--aurelia-marfil) 0%, var(--aurelia-champagne) 100%);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--aurelia-azul-profundo) 8%, transparent);
+  padding: 1.5rem 1.75rem;
+}
+.aurelia-encabezado::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--aurelia-dorado);
+}
+.aurelia-encabezado::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(var(--aurelia-dorado) 1px, transparent 1px);
+  background-size: 18px 18px;
+  opacity: .06;
+  pointer-events: none;
+}
+.aurelia-encabezado__texto,
+.aurelia-encabezado__extras {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+.aurelia-encabezado__iglesia {
+  margin: 0;
+  font-size: .72rem;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--suave);
+}
+.aurelia-encabezado__saludo { margin: .2rem 0 0; font-weight: 700; color: var(--texto); font-family: var(--fuente-titulos); font-size: 1.5rem; }
+.aurelia-encabezado__fecha { margin: .3rem 0 0; font-size: .85rem; color: var(--suave); }
+
+@media (max-width: 760px) {
+  .aurelia-encabezado {
+    padding: .65rem .85rem;
+    border-radius: 14px;
+    max-height: 110px;
+  }
+  .aurelia-encabezado__iglesia,
+  .aurelia-encabezado__fecha,
+  .aurelia-encabezado__extras .aurelia-reloj {
+    display: none;
+  }
+  .aurelia-encabezado__texto { flex: 1; }
+  .aurelia-encabezado__saludo {
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.aurelia-encabezado__extras { display: flex; align-items: center; gap: .75rem; flex-shrink: 0; }
+
+.aurelia-reloj {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  background: var(--superficie);
+  border: 1px solid var(--aurelia-champagne);
+  border-radius: 8px;
+  padding: .5rem .75rem;
+  font-size: .85rem;
+  color: var(--aurelia-azul-profundo);
+  white-space: nowrap;
+}
+.aurelia-reloj__hora {
+  font-weight: 700;
+  padding-left: .6rem;
+  border-left: 3px solid var(--aurelia-dorado);
+}
+
+@media (max-width: 760px) {
+  .aurelia-reloj__fecha { display: none; }
+  .aurelia-reloj { padding: .35rem .6rem; gap: 0; }
+}
+
+.aurelia-avatar {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: 50%;
+  background: var(--aurelia-dorado);
+  color: var(--aurelia-azul-profundo);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.aurelia-login { text-align: center; }
+.aurelia-login__logo { display: block; margin: 0 auto 1rem; width: 160px; height: 160px; object-fit: contain; }
+.aurelia-eslogan {
+  font-family: var(--fuente-titulos);
+  font-style: italic;
+  color: var(--texto);
+  font-size: 1.15rem;
+  margin: 0 0 1rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  .aurelia-login__logo { width: 128px; height: 128px; }
+}
+
+/* ---- Fase 2b: correcciones de celular y calidez de marca ---- */
+
+html, body { overflow-x: clip; }
+.contenido { min-width: 0; }
+
+/* El auto-fit con un mínimo fijo puede exceder el ancho disponible en
+   contenedores angostos; min() lo acota al 100% del contenedor. */
+.indicadores { grid-template-columns: repeat(auto-fit, minmax(min(170px, 100%), 1fr)); }
+.columnas { grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); }
+.lista li { overflow-wrap: anywhere; }
+
+.menu__usuario {
+  margin-top: auto;
+  background: var(--superficie);
+  border: 1px solid var(--aurelia-champagne);
+  color: var(--aurelia-azul-profundo);
+  border-radius: 10px;
+  padding: 1rem;
+  padding-bottom: calc(1rem + env(safe-area-inset-bottom) + .5rem);
+}
+/* estilos.css fija #9fb0d4/#fff a mano para el menú oscuro original; se
+   anula para el menú claro. */
+.menu__usuario span { color: var(--suave); }
+.menu__usuario button { border-color: var(--aurelia-azul-profundo); color: var(--aurelia-azul-profundo); }
+
+/* estilos.css fija color:#cfd6e6 a mano en .menu nav a (pensado para el
+   menú oscuro original); es más específico que heredar de .menu, así que
+   se anula aquí también. */
+.menu nav a { font-size: 1rem; min-height: 48px; display: flex; align-items: center; gap: .65rem; color: var(--aurelia-azul-profundo); }
+.menu nav svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+.aurelia-versiculo { display: none; }
+@media (min-width: 761px) {
+  .aurelia-versiculo {
+    display: block;
+    background: var(--superficie);
+    border: 1px solid var(--aurelia-champagne);
+    border-radius: 10px;
+    padding: .85rem 1rem;
+    margin-bottom: .75rem;
+    font-size: .8rem;
+    line-height: 1.4;
+  }
+  .aurelia-versiculo strong {
+    display: block;
+    margin-bottom: .3rem;
+    color: var(--suave);
+    text-transform: uppercase;
+    font-size: .7rem;
+    letter-spacing: .04em;
+  }
+  .aurelia-versiculo p { margin: 0; color: var(--aurelia-azul-profundo); }
+}
+
+.menu nav a.activo {
+  position: relative;
+  padding-left: calc(.75rem + 4px);
+}
+/* border-left normal seguiría la curva de la píldora (border-radius:999px)
+   y se vería como una media luna; una barra independiente evita eso. */
+.menu nav a.activo::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 25%;
+  bottom: 25%;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--aurelia-dorado);
+}
+
+.aurelia-marca__logo {
+  width: 130px;
+  height: 130px;
+  mix-blend-mode: multiply;
+}
+
+@media (max-width: 760px) {
+  .contenido { padding-inline: 1rem; }
+  .aurelia-marca__logo { width: 96px; height: 96px; }
+}
+
+/* Viewports móviles bajos (celular en horizontal, barras del navegador
+   visibles): el drawer tiene menos alto disponible, así que el logo se
+   reduce para no empujar "Cerrar sesión" fuera de vista. */
+@media (max-width: 760px) and (max-height: 700px) {
+  .aurelia-marca__logo { width: 80px; height: 80px; }
+  .aurelia-marca { padding: .75rem; margin-bottom: 1rem; }
+}
+
+@media (min-width: 761px) {
+  .menu__cabecera .menu__marca { display: none; }
+}
+
+.tarjeta {
+  border: 1px solid var(--borde);
+  border-radius: 16px;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--aurelia-azul-profundo) 6%, transparent);
+  transition: box-shadow .15s, transform .15s;
+}
+.indicador { border-top: 3px solid var(--aurelia-dorado); }
+
+.aurelia-indicador-icono {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--aurelia-champagne);
+  color: var(--aurelia-azul-profundo);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: .6rem;
+}
+.aurelia-indicador-icono svg { width: 22px; height: 22px; }
+
+.columnas h2 { display: flex; align-items: center; gap: .5rem; }
+.columnas h2 svg { width: 18px; height: 18px; color: var(--aurelia-azul-profundo); flex-shrink: 0; }
+
+.boton {
+  background: var(--aurelia-dorado);
+  color: var(--aurelia-azul-profundo);
+  transition: background-color .15s, transform .15s, box-shadow .15s;
+}
+/* Dorado+azul ya está al límite de 4.5:1 (4.61:1); oscurecer el relleno en
+   hover lo baja de ese umbral. El afecto de hover se da con sombra, no color. */
+.boton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--aurelia-azul-profundo) 25%, transparent);
+}
+.tarjeta:hover { box-shadow: 0 4px 14px color-mix(in srgb, var(--aurelia-azul-profundo) 10%, transparent); }
+
+/* ---- Fase 3 (reducida): tabla, botones, etiquetas, inputs ---- */
+
+.tabla th {
+  background: var(--aurelia-champagne);
+  color: var(--aurelia-azul-profundo);
+}
+.tabla tbody tr:hover { background: var(--aurelia-marfil); }
+
+.boton--secundario {
+  border-color: var(--aurelia-dorado);
+  color: var(--aurelia-azul-profundo);
+}
+.boton--secundario:hover { background: var(--aurelia-marfil); }
+
+.etiqueta--activo { background: var(--aurelia-salvia); color: var(--aurelia-azul-profundo); }
+/* dorado-texto (#8A6F3A) se elimina de la paleta: ya fallaba 4.5:1 sobre
+   champagne (3.51:1). Se usa el azul suave, que sí pasa (4.57:1). */
+.etiqueta--inactivo { background: var(--aurelia-champagne); color: var(--suave); }
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--aurelia-dorado);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--aurelia-dorado) 35%, transparent);
+}
+
+/* Enlaces sin clase (contenido suelto, sin estilo propio): azul con
+   subrayado, visitado igual. :where() mantiene especificidad en 0 para
+   no pisar .enlace-sutil, .accion-enlace, .menu nav a, etc. */
+a:where(:not([class])) {
+  color: var(--aurelia-azul-profundo);
+  text-decoration: underline;
+}
+a:where(:not([class])):visited {
+  color: var(--aurelia-azul-profundo);
+}
+
+/* ---- Fase 4: rediseño tipo tablero (tarjetas redondeadas, banner con paisaje,
+   menú flotante en píldoras). Solo usa la paleta Aurelia. Todo el bloque de
+   escritorio va en min-width:761px para no alterar el drawer móvil. ---- */
+
+.aurelia-banner-paisaje { display: none; }
+
+@media (min-width: 761px) {
+  body {
+    background:
+      radial-gradient(circle at 0 0, color-mix(in srgb, var(--aurelia-salvia) 18%, transparent), transparent 40%),
+      var(--aurelia-marfil);
+  }
+  .layout { gap: 1.25rem; padding: 1rem; align-items: flex-start; max-width: 1560px; margin: 0 auto; }
+
+  /* Menú flotante */
+  .menu {
+    position: sticky;
+    top: 1rem;
+    width: 248px;
+    flex-shrink: 0;
+    height: calc(100vh - 2rem);
+    overflow-y: auto;
+    border: 1px solid color-mix(in srgb, var(--aurelia-dorado) 45%, var(--aurelia-champagne));
+    border-radius: 28px;
+    padding: 1rem;
+    box-shadow: 0 6px 24px color-mix(in srgb, var(--aurelia-azul-profundo) 10%, transparent);
+  }
+  .aurelia-marca {
+    background: var(--aurelia-marfil);
+    border: 2px solid var(--aurelia-dorado);
+    border-radius: 20px;
+    padding: .75rem .75rem .9rem;
+    box-shadow: 0 3px 0 color-mix(in srgb, var(--aurelia-dorado) 55%, transparent);
+    margin-bottom: 1.1rem;
+  }
+  .aurelia-marca__logo { width: 76px; height: 76px; }
+  .aurelia-marca { margin-bottom: .75rem; padding: .6rem .6rem .7rem; }
+  .menu nav { gap: .1rem; flex: 0 0 auto; }
+  .menu nav a { min-height: 40px; }
+  .menu__usuario { margin-top: auto; padding: .75rem 1rem; }
+  .aurelia-versiculo { margin-bottom: .6rem; padding: .65rem .85rem; }
+  .menu nav a { border-radius: 999px; padding-inline: 1rem; font-weight: 600; transition: background-color .15s, box-shadow .15s; }
+  .menu nav a.activo {
+    background: var(--aurelia-blanco);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--aurelia-azul-profundo) 14%, transparent);
+  }
+  .menu nav a.activo svg { color: var(--aurelia-dorado); }
+  .aurelia-versiculo {
+    margin-top: 1rem;
+    border-radius: 18px;
+    border: 1px dashed var(--aurelia-dorado);
+    background: var(--aurelia-marfil);
+  }
+  .menu__usuario { border-radius: 18px; margin-top: .25rem; }
+
+  .contenido { max-width: none; padding: 0; flex: 1; }
+  .contenido--solo { padding: 2rem; }
+
+  /* Banner con paisaje */
+  .aurelia-encabezado {
+    min-height: 170px;
+    border-radius: 28px;
+    padding: 1.75rem 2rem 2rem;
+    min-height: 210px;
+    align-items: flex-start;
+    background: linear-gradient(90deg, var(--aurelia-marfil) 0%, var(--aurelia-champagne) 100%);
+    box-shadow: 0 6px 22px color-mix(in srgb, var(--aurelia-azul-profundo) 9%, transparent);
+  }
+  /* Foto a la derecha, desvanecida hacia el fondo para que el texto se lea */
+  .aurelia-encabezado::after {
+    content: '';
+    position: absolute;
+    inset: 0 9rem 0 auto;
+    width: 58%;
+    opacity: 1;
+    background: url('/img/banner-oracion.png') center 30% / cover no-repeat;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 45%, #000 82%, transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0%, #000 45%, #000 82%, transparent 100%);
+    pointer-events: none;
+  }
+  .aurelia-encabezado__texto { align-self: center; max-width: 45%; }
+  .aurelia-encabezado__saludo { font-size: 2.1rem; line-height: 1.15; margin-top: .25rem; }
+  .aurelia-encabezado__fecha { font-size: .95rem; }
+  .aurelia-encabezado__extras { align-items: flex-start; }
+  .aurelia-reloj {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .15rem;
+    background: color-mix(in srgb, var(--aurelia-blanco) 85%, transparent);
+    border-radius: 16px;
+    padding: .6rem .9rem;
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--aurelia-azul-profundo) 10%, transparent);
+  }
+  .aurelia-reloj__hora { border-left: 0; padding-left: 0; font-size: 1.1rem; }
+  .aurelia-avatar { width: 56px; height: 56px; min-width: 56px; border: 3px solid var(--aurelia-blanco); font-size: 1.1rem; box-shadow: 0 2px 8px color-mix(in srgb, var(--aurelia-azul-profundo) 18%, transparent); }
+
+  /* El contenido sube sobre el borde del banner, como en el diseño */
+  .aurelia-encabezado + h1 { margin: 0 0 1rem 1.25rem; font-size: 1.25rem; }
+}
+
+/* Tarjetas */
+.tarjeta {
+  border-radius: 22px;
+  background: var(--aurelia-blanco);
+  padding: 1.35rem 1.5rem;
+}
+.tarjeta h2 {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+.tarjeta h2 svg { color: var(--aurelia-dorado); }
+
+/* Indicadores como fichas con icono, tipo "Colecciones" */
+.indicadores { gap: 1rem; }
+.indicador {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas: "icono texto" "icono valor";
+  column-gap: .9rem;
+  align-items: center;
+  border-top: 1px solid var(--borde);
+  background: color-mix(in srgb, var(--aurelia-champagne) 28%, var(--aurelia-blanco));
+  padding: 1rem 1.15rem;
+}
+.indicador .aurelia-indicador-icono { grid-area: icono; margin: 0; width: 52px; height: 52px; background: var(--aurelia-blanco); border: 2px solid var(--aurelia-dorado); }
+.indicador span { grid-area: texto; align-self: end; }
+.indicador strong { grid-area: valor; align-self: start; margin-top: 0; font-family: var(--fuente-titulos); font-size: 1.7rem; }
+.indicador--dinero strong { color: var(--aurelia-azul-profundo); }
+
+/* Gráfica */
+.grafica { background: var(--aurelia-blanco); }
+.grafica__lienzo {
+  background: color-mix(in srgb, var(--aurelia-champagne) 22%, var(--aurelia-blanco));
+  border-radius: 16px;
+  padding: .75rem;
+}
+.grafica__datos summary { color: var(--aurelia-azul-profundo); font-weight: 600; }
+
+/* Listas dentro de tarjetas */
+.columnas { gap: 1.25rem; }
+.lista li {
+  border: 0;
+  background: color-mix(in srgb, var(--aurelia-champagne) 30%, var(--aurelia-blanco));
+  border-radius: 14px;
+  padding: .7rem .9rem;
+  margin-bottom: .55rem;
+}
+.lista li:last-child { margin-bottom: 0; }
+.lista li.importante { border-left: 4px solid var(--aurelia-dorado); }
+.lista li.importante strong::before { color: var(--aurelia-dorado); }
+
+/* Botones, campos y tablas más redondeados */
+.boton { border-radius: 999px; padding: .65rem 1.25rem; font-weight: 600; }
+input, select, textarea { border-radius: 12px; }
+.tabla-scroll { border-radius: 18px; border: 1px solid var(--borde); background: var(--aurelia-blanco); }
+.tabla { border: 0; }
+.tabla th:first-child { border-top-left-radius: 18px; }
+.tabla th:last-child { border-top-right-radius: 18px; }
+.calendario-tabla { border-radius: 18px; }
+.etiqueta { border-radius: 999px; }
+
+h1 { font-family: var(--fuente-titulos); }
