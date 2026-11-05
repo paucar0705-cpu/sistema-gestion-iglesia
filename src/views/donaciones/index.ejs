@@ -1,0 +1,79 @@
+<%- include('../partials/header', { titulo: 'Donaciones' }) %>
+<h1>Donaciones</h1>
+<p class="sub"><a class="enlace-sutil" href="/donaciones/resumen">Ver resumen mensual</a></p>
+
+<form class="filtros" method="GET" action="/donaciones">
+  <label>Desde <input type="date" name="desde" value="<%= filtros.desde %>"></label>
+  <label>Hasta <input type="date" name="hasta" value="<%= filtros.hasta %>"></label>
+  <label>Concepto
+    <select name="concepto">
+      <option value="">Todos</option>
+      <% Object.entries(conceptos).forEach(([clave, etiqueta]) => { %>
+        <option value="<%= clave %>" <%= filtros.concepto === clave ? 'selected' : '' %>><%= etiqueta %></option>
+      <% }) %>
+    </select>
+  </label>
+  <label>Método
+    <select name="metodo">
+      <option value="">Todos</option>
+      <% Object.entries(metodos).forEach(([clave, etiqueta]) => { %>
+        <option value="<%= clave %>" <%= filtros.metodo === clave ? 'selected' : '' %>><%= etiqueta %></option>
+      <% }) %>
+    </select>
+  </label>
+  <label class="opcion-casilla">
+    <input type="checkbox" name="soloAnonimas" value="1" <%= filtros.soloAnonimas ? 'checked' : '' %>>
+    Solo anónimas
+  </label>
+  <button type="submit" class="boton">Filtrar</button>
+  <a class="boton boton--nuevo" href="/donaciones/nuevo">Nueva aportación</a>
+</form>
+
+<p id="mensajeError" class="alerta" role="alert"<% if (!errores.length) { %> hidden<% } %>><%= errores.join(' ') %></p>
+
+<div class="indicadores">
+  <div class="tarjeta indicador indicador--dinero">
+    <span>Total del periodo</span>
+    <strong><%= Number(totales.total).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }) %></strong>
+  </div>
+  <div class="tarjeta indicador">
+    <span>Aportaciones</span>
+    <strong><%= totales.aportaciones %></strong>
+  </div>
+  <div class="tarjeta indicador">
+    <span>Anónimas</span>
+    <strong><%= totales.anonimas %></strong>
+  </div>
+</div>
+
+<% if (!donaciones.length) { %>
+  <p class="sub">No hay aportaciones en el periodo seleccionado.</p>
+<% } else { %>
+<div class="tabla-scroll">
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th scope="col">Fecha</th>
+        <th scope="col">Donante</th>
+        <th scope="col">Concepto</th>
+        <th scope="col">Método</th>
+        <th scope="col">Monto</th>
+        <th scope="col">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% donaciones.forEach(d => { %>
+        <tr>
+          <td><%= d.fecha %></td>
+          <td><%= d.donante %></td>
+          <td><%= conceptos[d.concepto] || d.concepto %></td>
+          <td><%= metodos[d.metodo] || d.metodo %></td>
+          <td><%= Number(d.monto).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }) %></td>
+          <td class="acciones"><a class="accion-enlace" href="/donaciones/<%= d.id %>">Ver</a></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+<% } %>
+<%- include('../partials/footer') %>

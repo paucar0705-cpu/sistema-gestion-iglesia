@@ -1,0 +1,104 @@
+<%
+  const etiquetasTipo = {
+    culto: 'Culto',
+    reunion: 'Reunión',
+    actividad: 'Actividad',
+    administrativo: 'Administrativo',
+  };
+%>
+<%- include('../partials/header', { titulo: 'Historial de asistencias' }) %>
+<p><a class="enlace-sutil" href="/asistencias">← Volver a eventos</a></p>
+<h1>Historial de asistencias</h1>
+
+<form class="filtros" method="GET" action="/asistencias/historial">
+  <label>Desde <input type="date" name="desde" value="<%= filtros.desde %>"></label>
+  <label>Hasta <input type="date" name="hasta" value="<%= filtros.hasta %>"></label>
+  <label>Tipo
+    <select name="tipo">
+      <option value="">Todos</option>
+      <% tipos.forEach(t => { %>
+        <option value="<%= t %>" <%= filtros.tipo === t ? 'selected' : '' %>><%= etiquetasTipo[t] || t %></option>
+      <% }) %>
+    </select>
+  </label>
+  <label>Agrupar por
+    <select name="agrupacion">
+      <option value="semana" <%= filtros.agrupacion === 'semana' ? 'selected' : '' %>>Semana</option>
+      <option value="mes" <%= filtros.agrupacion === 'mes' ? 'selected' : '' %>>Mes</option>
+    </select>
+  </label>
+  <button type="submit" class="boton">Filtrar</button>
+</form>
+
+<p id="mensajeError" class="alerta" role="alert"<% if (!errores.length) { %> hidden<% } %>><%= errores.join(' ') %></p>
+
+<section class="tarjeta">
+  <h2>Resumen por <%= filtros.agrupacion === 'mes' ? 'mes' : 'semana' %></h2>
+  <% if (!resumen.length) { %>
+    <p class="sub">No hay registros de asistencia en el periodo seleccionado.</p>
+  <% } else { %>
+  <div class="tabla-scroll">
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th scope="col">Periodo</th>
+          <th scope="col">Eventos</th>
+          <th scope="col">Presentes</th>
+          <th scope="col">Ausentes</th>
+          <th scope="col">Promedio por evento</th>
+          <th scope="col">% Asistencia</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% resumen.forEach(r => { %>
+          <tr>
+            <td><%= r.periodo %></td>
+            <td><%= r.eventos %></td>
+            <td><%= r.presentes %></td>
+            <td><%= r.ausentes %></td>
+            <td><%= r.promedio_por_evento %></td>
+            <td><%= r.porcentaje == null ? '—' : r.porcentaje + '%' %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+  <% } %>
+</section>
+
+<section class="tarjeta">
+  <h2>Eventos del periodo</h2>
+  <% if (!eventos.length) { %>
+    <p class="sub">No hay eventos en el periodo seleccionado.</p>
+  <% } else { %>
+  <div class="tabla-scroll">
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th scope="col">Evento</th>
+          <th scope="col">Tipo</th>
+          <th scope="col">Fecha</th>
+          <th scope="col">Ministerio</th>
+          <th scope="col">Presentes</th>
+          <th scope="col">Ausentes</th>
+          <th scope="col">% Asistencia</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% eventos.forEach(e => { %>
+          <tr>
+            <td><a class="accion-enlace" href="/asistencias/evento/<%= e.id %>"><%= e.titulo %></a></td>
+            <td><%= etiquetasTipo[e.tipo] || e.tipo %></td>
+            <td><%= e.fecha %></td>
+            <td><%= e.ministerio || '—' %></td>
+            <td><%= e.presentes %></td>
+            <td><%= e.ausentes %></td>
+            <td><%= e.porcentaje == null ? '—' : e.porcentaje + '%' %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+  <% } %>
+</section>
+<%- include('../partials/footer') %>

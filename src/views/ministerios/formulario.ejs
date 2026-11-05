@@ -1,0 +1,38 @@
+<%- include('../partials/header', { titulo: modo === 'editar' ? 'Editar ministerio' : 'Nuevo ministerio' }) %>
+<h1><%= modo === 'editar' ? 'Editar ministerio' : 'Nuevo ministerio' %></h1>
+
+<section class="tarjeta formulario-ancho">
+  <p id="mensajeError" class="alerta" role="alert"<% if (!errores.length) { %> hidden<% } %>><%= errores.join(' ') %></p>
+
+  <form id="formMinisterio" method="POST" action="<%= modo === 'editar' ? '/ministerios/' + ministerio.id : '/ministerios' %>" novalidate>
+    <label>Nombre*
+      <input type="text" name="nombre" id="nombre" maxlength="120" value="<%= ministerio ? ministerio.nombre : '' %>" required>
+    </label>
+    <label>Descripción
+      <textarea name="descripcion" id="descripcion" maxlength="2000" rows="4"><%= ministerio ? (ministerio.descripcion || '') : '' %></textarea>
+    </label>
+    <label>Coordinador
+      <select name="coordinador_id" id="coordinador_id">
+        <option value="">Sin coordinador</option>
+        <% coordinadores.forEach(c => { %>
+          <option value="<%= c.id %>" <%= ministerio && String(ministerio.coordinador_id) === String(c.id) ? 'selected' : '' %>><%= c.nombre %> (<%= c.rol %>)</option>
+        <% }) %>
+      </select>
+    </label>
+    <p class="sub">* Campos obligatorios</p>
+    <div class="acciones-formulario">
+      <button type="submit" class="boton">Guardar</button>
+      <a class="boton boton--secundario" href="/ministerios">Cancelar</a>
+    </div>
+  </form>
+</section>
+
+<script src="/js/formularios.js"></script>
+<script>
+  (function () {
+    validarFormulario(document.querySelector('#formMinisterio'), [
+      { selector: '#nombre', validar: (valor) => valor === '', mensaje: 'El nombre del ministerio es obligatorio.' },
+    ]);
+  })();
+</script>
+<%- include('../partials/footer') %>

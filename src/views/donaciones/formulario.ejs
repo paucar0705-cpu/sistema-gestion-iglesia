@@ -1,0 +1,60 @@
+<%- include('../partials/header', { titulo: 'Nueva aportación' }) %>
+<h1>Nueva aportación</h1>
+
+<section class="tarjeta formulario-ancho">
+  <p id="mensajeError" class="alerta" role="alert"<% if (!errores.length) { %> hidden<% } %>><%= errores.join(' ') %></p>
+
+  <form id="formDonacion" method="POST" action="/donaciones" novalidate>
+    <label>Fecha*
+      <input type="date" name="fecha" id="fecha" value="<%= donacion ? donacion.fecha : new Date().toLocaleDateString('en-CA') %>" required>
+    </label>
+    <label>Monto en pesos*
+      <input type="text" name="monto" id="monto" inputmode="decimal" placeholder="Ej. 1500.00" value="<%= donacion ? donacion.monto : '' %>" required>
+    </label>
+    <label>Concepto*
+      <select name="concepto" id="concepto" required>
+        <option value="">Selecciona un concepto</option>
+        <% Object.entries(conceptos).forEach(([clave, etiqueta]) => { %>
+          <option value="<%= clave %>" <%= donacion && donacion.concepto === clave ? 'selected' : '' %>><%= etiqueta %></option>
+        <% }) %>
+      </select>
+    </label>
+    <label>Método de recepción*
+      <select name="metodo" id="metodo" required>
+        <option value="">Selecciona un método</option>
+        <% Object.entries(metodos).forEach(([clave, etiqueta]) => { %>
+          <option value="<%= clave %>" <%= donacion && donacion.metodo === clave ? 'selected' : '' %>><%= etiqueta %></option>
+        <% }) %>
+      </select>
+    </label>
+    <label>Donante
+      <select name="miembro_id" id="miembro_id">
+        <option value="">Anónimo</option>
+        <% donantes.forEach(m => { %>
+          <option value="<%= m.id %>" <%= donacion && String(donacion.miembro_id) === String(m.id) ? 'selected' : '' %>><%= m.nombre %> <%= m.apellidos || '' %></option>
+        <% }) %>
+      </select>
+    </label>
+    <label>Descripción
+      <textarea name="descripcion" id="descripcion" maxlength="2000" rows="3"><%= donacion ? (donacion.descripcion || '') : '' %></textarea>
+    </label>
+    <p class="sub">* Campos obligatorios. Deja el donante vacío para una aportación anónima.</p>
+    <div class="acciones-formulario">
+      <button type="submit" class="boton">Registrar</button>
+      <a class="boton boton--secundario" href="/donaciones">Cancelar</a>
+    </div>
+  </form>
+</section>
+
+<script src="/js/formularios.js"></script>
+<script>
+  (function () {
+    validarFormulario(document.querySelector('#formDonacion'), [
+      { selector: '#fecha', validar: (valor) => valor === '', mensaje: 'La fecha es obligatoria.' },
+      { selector: '#monto', validar: (valor) => valor === '', mensaje: 'El monto es obligatorio.' },
+      { selector: '#concepto', validar: (valor) => valor === '', mensaje: 'El concepto es obligatorio.' },
+      { selector: '#metodo', validar: (valor) => valor === '', mensaje: 'El método de recepción es obligatorio.' },
+    ]);
+  })();
+</script>
+<%- include('../partials/footer') %>

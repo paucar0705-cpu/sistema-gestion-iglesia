@@ -1,0 +1,2 @@
+<%# Vista SOLO para pruebas (test/anuncios-configuracion.test.js). No es la vista definitiva. %>
+<%- JSON.stringify({ vista: 'error', datos: Object.fromEntries(Object.keys(locals).filter((k) => !(k in _locals) && !['settings', '_locals', 'cache'].includes(k)).map((k) => [k, locals[k]])) }) %>

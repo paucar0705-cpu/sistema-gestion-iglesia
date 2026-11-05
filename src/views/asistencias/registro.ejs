@@ -1,0 +1,46 @@
+<%- include('../partials/header', { titulo: 'Registro de asistencia' }) %>
+<p><a class="enlace-sutil" href="/asistencias">← Volver a eventos</a></p>
+<h1><%= evento.titulo %></h1>
+<p class="sub">
+  <%= evento.fecha %><% if (evento.hora) { %> · <%= evento.hora %><% } %><% if (evento.lugar) { %> · <%= evento.lugar %><% } %><% if (evento.ministerio) { %> · <%= evento.ministerio %><% } %>
+</p>
+
+<% if (mensaje) { %><p role="status"><%= mensaje %></p><% } %>
+<p id="mensajeError" class="alerta" role="alert"<% if (!errores.length) { %> hidden<% } %>><%= errores.join(' ') %></p>
+
+<% if (!puedeRegistrar) { %>
+  <p class="sub">Este evento todavía no ocurre; la asistencia podrá registrarse a partir de su fecha.</p>
+<% } %>
+
+<% if (!miembros.length) { %>
+  <p class="sub">No hay miembros convocados para este evento.</p>
+<% } else { %>
+<section class="tarjeta">
+  <form method="POST" action="/asistencias/evento/<%= evento.id %>">
+    <div class="tabla-scroll">
+      <table class="tabla">
+        <thead><tr><th scope="col">Miembro</th><th scope="col">Presente</th></tr></thead>
+        <tbody>
+          <% miembros.forEach(m => { %>
+            <tr>
+              <td>
+                <%= m.nombre %> <%= m.apellidos || '' %>
+                <% if (m.activo !== 1) { %><span class="etiqueta etiqueta--inactivo">Inactivo</span><% } %>
+              </td>
+              <td>
+                <input type="checkbox" name="presentes" value="<%= m.id %>" <%= m.presente === 1 ? 'checked' : '' %> <%= puedeRegistrar ? '' : 'disabled' %>>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    <% if (puedeRegistrar) { %>
+      <div class="acciones-formulario">
+        <button type="submit" class="boton">Guardar asistencia</button>
+      </div>
+    <% } %>
+  </form>
+</section>
+<% } %>
+<%- include('../partials/footer') %>

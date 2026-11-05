@@ -1,0 +1,67 @@
+<%
+  const etiquetasTipo = {
+    culto: 'Culto',
+    reunion: 'Reunión',
+    actividad: 'Actividad',
+    administrativo: 'Administrativo',
+  };
+%>
+<%- include('../partials/header', { titulo: 'Asistencias' }) %>
+<h1>Asistencias</h1>
+<p class="sub"><a class="enlace-sutil" href="/asistencias/historial">Ver historial y resumen</a></p>
+
+<form class="filtros" method="GET" action="/asistencias">
+  <label>Desde <input type="date" name="desde" value="<%= filtros.desde %>"></label>
+  <label>Hasta <input type="date" name="hasta" value="<%= filtros.hasta %>"></label>
+  <label>Tipo
+    <select name="tipo">
+      <option value="">Todos</option>
+      <% tipos.forEach(t => { %>
+        <option value="<%= t %>" <%= filtros.tipo === t ? 'selected' : '' %>><%= etiquetasTipo[t] || t %></option>
+      <% }) %>
+    </select>
+  </label>
+  <button type="submit" class="boton">Filtrar</button>
+</form>
+
+<p id="mensajeError" class="alerta" role="alert"<% if (!errores.length) { %> hidden<% } %>><%= errores.join(' ') %></p>
+
+<% if (!eventos.length) { %>
+  <p class="sub">No hay eventos en el periodo seleccionado.</p>
+<% } else { %>
+<div class="tabla-scroll">
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th scope="col">Evento</th>
+        <th scope="col">Tipo</th>
+        <th scope="col">Fecha</th>
+        <th scope="col">Ministerio</th>
+        <th scope="col">Presentes</th>
+        <th scope="col">Ausentes</th>
+        <th scope="col">% Asistencia</th>
+        <% if (puedeRegistrar) { %><th scope="col">Acciones</th><% } %>
+      </tr>
+    </thead>
+    <tbody>
+      <% eventos.forEach(e => { %>
+        <tr>
+          <td><%= e.titulo %></td>
+          <td><%= etiquetasTipo[e.tipo] || e.tipo %></td>
+          <td><%= e.fecha %></td>
+          <td><%= e.ministerio || '—' %></td>
+          <td><%= e.presentes %></td>
+          <td><%= e.ausentes %></td>
+          <td><%= e.porcentaje == null ? '—' : e.porcentaje + '%' %></td>
+          <% if (puedeRegistrar) { %>
+          <td class="acciones">
+            <a class="accion-enlace" href="/asistencias/evento/<%= e.id %>">Registrar / ver</a>
+          </td>
+          <% } %>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+<% } %>
+<%- include('../partials/footer') %>
