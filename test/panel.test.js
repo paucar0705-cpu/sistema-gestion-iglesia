@@ -49,7 +49,7 @@ describe('RF-08 con datos de seed.sql', () => {
       for (const etiqueta of ['Miembros activos', 'Próximos eventos', 'Asistencias registradas', 'Ministerios']) {
         assert.ok(html.includes(etiqueta), etiqueta);
       }
-      assert.ok(html.includes('<h2>Avisos</h2>'));
+      assert.match(html, /<h2>(?:<svg[^>]*>[\s\S]*?<\/svg>)?Avisos<\/h2>/);
     });
   }
 

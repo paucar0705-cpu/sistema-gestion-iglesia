@@ -4,6 +4,7 @@
 
 const router = require('express').Router();
 const db = require('../db/connection');
+const Anuncios = require('../models/anuncios.model');
 const { requireSeccion } = require('../middlewares/auth');
 const { ROLES_FINANCIEROS, puedeVer } = require('../config/permisos');
 
@@ -16,10 +17,8 @@ router.get('/', requireSeccion('panel'), (req, res) => {
     ORDER BY fecha, hora LIMIT 5
   `).all();
 
-  const anuncios = db.prepare(`
-    SELECT titulo, contenido, fecha_publicacion, importante FROM anuncios
-    ORDER BY importante DESC, fecha_publicacion DESC LIMIT 5
-  `).all();
+  // RF-07: solo anuncios ya publicados; los programados con fecha futura esperan su día.
+  const anuncios = Anuncios.publicados(5);
 
   // Resumen de ingresos SOLO para roles financieros
   let ingresosMes = null;
