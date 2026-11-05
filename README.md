@@ -13,9 +13,8 @@ Requisitos: **Node.js 22.13 o superior** (se recomienda la versión LTS más rec
 > La base de datos usa el SQLite que ya viene dentro de Node, así que no hay que instalar ni compilar nada extra.
 
 ```bash
-git clone https://github.com/USUARIO/sistema-gestion-iglesia.git
+git clone https://github.com/paucar0705-cpu/sistema-gestion-iglesia.git
 cd sistema-gestion-iglesia
-git checkout develop
 npm install
 cp .env.example .env        # en Windows (CMD): copy .env.example .env
 npm run db:reset            # crea la base de datos con datos de prueba
@@ -80,18 +79,20 @@ sistema-gestion-iglesia/
 
 | RF | Módulo | Ruta | Archivo de rutas | Estado |
 |---|---|---|---|---|
-| RF-01 | Inicio de sesión y usuarios | `/login`, `/usuarios` | `auth.routes.js`, `usuarios.routes.js` | Login básico listo |
-| RF-02 | Miembros | `/miembros` | `miembros.routes.js` | Pendiente |
-| RF-03 | Asistencias | `/asistencias` | `asistencias.routes.js` | Pendiente |
-| RF-04 | Eventos | `/eventos` | `eventos.routes.js` | Pendiente |
-| RF-05 | Ministerios | `/ministerios` | `ministerios.routes.js` | Pendiente |
-| RF-06 | Donaciones | `/donaciones` | `donaciones.routes.js` | Pendiente |
-| RF-07 | Anuncios | `/anuncios` | `anuncios.routes.js` | Pendiente |
-| RF-08 | Panel principal | `/panel` | `panel.routes.js` | Indicadores listos, falta gráfica |
-| RF-09 | Reportes | `/reportes` | `reportes.routes.js` | Pendiente (vistas SQL listas) |
-| RF-10 | Configuración | `/configuracion` | `configuracion.routes.js` | Pendiente |
+| RF-01 | Inicio de sesión y usuarios | `/login`, `/usuarios` | `auth.routes.js`, `usuarios.routes.js` | Completo (login, roles, usuarios, recuperar contraseña) |
+| RF-02 | Miembros | `/miembros` | `miembros.routes.js` | Completo |
+| RF-03 | Asistencias | `/asistencias` | `asistencias.routes.js` | Completo |
+| RF-04 | Eventos | `/eventos` | `eventos.routes.js` | Completo |
+| RF-05 | Ministerios | `/ministerios` | `ministerios.routes.js` | Completo |
+| RF-06 | Donaciones | `/donaciones` | `donaciones.routes.js` | Completo |
+| RF-07 | Anuncios | `/anuncios` | `anuncios.routes.js` | Completo |
+| RF-08 | Panel principal | `/panel` | `panel.routes.js` | Completo (indicadores y gráfica) |
+| RF-09 | Reportes | `/reportes` | `reportes.routes.js` | Completo (con exportación a Excel) |
+| RF-10 | Configuración | `/configuracion` | `configuracion.routes.js` | Completo |
 
-Cada archivo de rutas tiene un bloque `TODO` con lo que falta.
+Versión actual: v1.0.
+
+Pendiente para próximas versiones: protección CSRF en formularios y subida de archivos para el logotipo.
 
 ---
 
