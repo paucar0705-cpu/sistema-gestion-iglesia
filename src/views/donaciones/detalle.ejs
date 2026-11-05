@@ -1,0 +1,16 @@
+<%- include('../partials/header', { titulo: 'Detalle de aportación' }) %>
+<p><a class="enlace-sutil" href="/donaciones">← Volver a donaciones</a></p>
+<h1>Aportación #<%= donacion.id %></h1>
+
+<section class="tarjeta formulario-ancho">
+  <dl class="detalle-lista">
+    <dt>Fecha</dt><dd><%= donacion.fecha %></dd>
+    <dt>Donante</dt><dd><%= donacion.donante %></dd>
+    <dt>Concepto</dt><dd><%= conceptos[donacion.concepto] || donacion.concepto %></dd>
+    <dt>Método</dt><dd><%= metodos[donacion.metodo] || donacion.metodo %></dd>
+    <dt>Monto</dt><dd><%= Number(donacion.monto).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }) %></dd>
+    <dt>Descripción</dt><dd class="texto-multilinea"><%= donacion.descripcion || '—' %></dd>
+    <dt>Registrado por</dt><dd><%= donacion.registrado_por || '—' %></dd>
+  </dl>
+</section>
+<%- include('../partials/footer') %>

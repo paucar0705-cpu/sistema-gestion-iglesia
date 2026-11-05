@@ -1,0 +1,43 @@
+<%- include('../partials/header', { titulo: miembro ? 'Editar miembro' : 'Nuevo miembro' }) %>
+<h1><%= miembro ? 'Editar miembro' : 'Nuevo miembro' %></h1>
+
+<section class="tarjeta formulario-ancho">
+  <p id="mensajeError" class="alerta" role="alert"<% if (!errores.length) { %> hidden<% } %>><%= errores.join(' ') %></p>
+
+  <form id="formMiembro" method="POST" action="<%= miembro && miembro.id ? '/miembros/' + miembro.id : '/miembros' %>" novalidate>
+    <label>Nombre*
+      <input type="text" name="nombre" id="nombre" value="<%= miembro ? miembro.nombre : '' %>" required>
+    </label>
+    <label>Apellidos
+      <input type="text" name="apellidos" id="apellidos" value="<%= miembro ? (miembro.apellidos || '') : '' %>">
+    </label>
+    <label>Teléfono
+      <input type="text" name="telefono" id="telefono" value="<%= miembro ? (miembro.telefono || '') : '' %>">
+    </label>
+    <label>Correo electrónico
+      <input type="email" name="correo" id="correo" value="<%= miembro ? (miembro.correo || '') : '' %>">
+    </label>
+    <label>Fecha de ingreso*
+      <input type="date" name="fecha_ingreso" id="fecha_ingreso"
+        value="<%= miembro ? miembro.fecha_ingreso : new Date().toLocaleDateString('en-CA') %>" required>
+    </label>
+
+    <div class="acciones-formulario">
+      <button type="submit" class="boton">Guardar</button>
+      <a class="boton boton--secundario" href="/miembros">Cancelar</a>
+    </div>
+  </form>
+</section>
+
+<script src="/js/formularios.js"></script>
+<script>
+  (function () {
+    const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    validarFormulario(document.querySelector('#formMiembro'), [
+      { selector: '#nombre', validar: (valor) => valor === '', mensaje: 'El nombre es obligatorio.' },
+      { selector: '#fecha_ingreso', validar: (valor) => valor === '', mensaje: 'La fecha de ingreso es obligatoria.' },
+      { selector: '#correo', validar: (valor) => valor !== '' && !regexCorreo.test(valor), mensaje: 'Ingresa un correo electrónico válido.' },
+    ]);
+  })();
+</script>
+<%- include('../partials/footer') %>

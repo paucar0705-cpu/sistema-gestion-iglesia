@@ -1,0 +1,51 @@
+<%- include('../partials/header', { titulo: 'Configuración' }) %>
+<h1>Configuración de la iglesia</h1>
+
+<section class="tarjeta formulario-ancho">
+  <% if (mensaje) { %><p role="status"><%= mensaje %></p><% } %>
+  <p id="mensajeError" class="alerta" role="alert"<% if (!errores.length) { %> hidden<% } %>><%= errores.join(' ') %></p>
+
+  <form id="formConfiguracion" method="POST" action="/configuracion" novalidate>
+    <label>Nombre de la iglesia*
+      <input type="text" name="nombre" id="nombre" maxlength="150" value="<%= configuracion.nombre || '' %>" required>
+    </label>
+    <label>Dirección
+      <input type="text" name="direccion" id="direccion" maxlength="300" value="<%= configuracion.direccion || '' %>">
+    </label>
+    <label>Teléfono
+      <input type="tel" name="telefono" id="telefono" maxlength="30" value="<%= configuracion.telefono || '' %>">
+    </label>
+    <label>Correo electrónico
+      <input type="email" name="correo" id="correo" maxlength="254" value="<%= configuracion.correo || '' %>">
+    </label>
+    <label>Horarios
+      <textarea name="horarios" id="horarios" maxlength="1000" rows="4"><%= configuracion.horarios || '' %></textarea>
+    </label>
+    <label>Logotipo
+      <select name="logo_ruta" id="logo_ruta">
+        <option value="">Conservar el actual</option>
+        <% logosDisponibles.forEach(ruta => { %>
+          <option value="<%= ruta %>" <%= configuracion.logo_ruta === ruta ? 'selected' : '' %>><%= ruta %></option>
+        <% }) %>
+      </select>
+    </label>
+    <label class="opcion-casilla">
+      <input type="checkbox" name="quitar_logo" id="quitar_logo">
+      Quitar logotipo actual
+    </label>
+    <p class="sub">* Campos obligatorios</p>
+    <div class="acciones-formulario">
+      <button type="submit" class="boton">Guardar</button>
+    </div>
+  </form>
+</section>
+
+<script src="/js/formularios.js"></script>
+<script>
+  (function () {
+    validarFormulario(document.querySelector('#formConfiguracion'), [
+      { selector: '#nombre', validar: (valor) => valor === '', mensaje: 'El nombre de la iglesia es obligatorio.' },
+    ]);
+  })();
+</script>
+<%- include('../partials/footer') %>

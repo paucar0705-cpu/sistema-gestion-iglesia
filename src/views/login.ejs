@@ -1,17 +1,19 @@
 <%- include('partials/header', { titulo: 'Iniciar sesión' }) %>
-<section class="tarjeta login">
-  <h1><%= iglesia.nombre %></h1>
+<section class="tarjeta login aurelia-login">
+  <h1 class="sr-only">Aurelia, Sistema de Gestión de Iglesias</h1>
+  <img src="/img/aurelia-logo.png" alt="Aurelia" width="160" height="160" class="aurelia-login__logo">
+  <%- include('partials/eslogan') %>
   <p class="sub">Inicia sesión para continuar</p>
-  <% if (error) { %><p class="alerta"><%= error %></p><% } %>
-  <form method="POST" action="/login">
+  <p id="mensajeError" class="alerta" role="alert"<% if (!error) { %> hidden<% } %>><%= error || '' %></p>
+  <form method="POST" action="/login" novalidate>
     <label>Correo electrónico
-      <input type="email" name="correo" value="<%= correo %>" required autofocus>
+      <input type="email" name="correo" id="correo" value="<%= correo %>" required autofocus>
     </label>
     <label>Contraseña
-      <input type="password" name="password" required>
+      <input type="password" name="password" id="password" required>
     </label>
     <button type="submit" class="boton">Entrar</button>
+    <a class="enlace-sutil" href="/recuperar">¿Olvidaste tu contraseña?</a>
   </form>
-  <!-- TODO Persona 2: enlace a /recuperar -->
 </section>
 <%- include('partials/footer') %>

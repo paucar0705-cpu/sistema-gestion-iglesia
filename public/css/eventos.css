@@ -1,0 +1,167 @@
+/* Calendario de eventos (RF-04). Responsable: Persona 1 (Frontend) */
+:root {
+  /* Culto: salvia puro + azul da 4.16:1, no llega a 4.5:1. Aclarado 10%
+     hacia blanco (no oscurecido: oscurecer acerca el fondo al azul del
+     texto y empeora el contraste) sube a ~4.7:1, sin tocar --aurelia-salvia. */
+  --tipo-culto-fondo: color-mix(in srgb, var(--aurelia-salvia) 90%, white);
+  --tipo-culto-texto: var(--aurelia-azul-profundo);
+  --tipo-reunion-fondo: var(--aurelia-champagne);
+  --tipo-reunion-texto: var(--aurelia-azul-profundo);
+  --tipo-actividad-fondo: color-mix(in srgb, var(--aurelia-dorado) 55%, var(--aurelia-marfil));
+  --tipo-actividad-texto: var(--aurelia-azul-profundo);
+  --tipo-administrativo-fondo: var(--aurelia-marfil);
+  --tipo-administrativo-texto: var(--aurelia-azul-profundo);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.calendario__cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+.calendario__cabecera h1 { margin: 0; }
+.calendario__nav { display: flex; gap: .5rem; }
+.calendario__cabecera .boton--nuevo { margin-left: auto; }
+
+.calendario-tabla-contenedor { overflow-x: auto; }
+.calendario-tabla {
+  width: 100%;
+  min-width: 700px;
+  border-collapse: collapse;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  table-layout: fixed;
+}
+.calendario-tabla th {
+  background: var(--fondo);
+  color: var(--suave);
+  font-weight: 600;
+  font-size: .85rem;
+  padding: .5rem;
+  text-align: left;
+  border-bottom: 1px solid var(--borde);
+}
+.calendario-tabla td.dia {
+  vertical-align: top;
+  padding: .4rem;
+  border: 1px solid var(--borde);
+  height: 110px;
+  overflow-y: auto;
+}
+.dia--vacio { background: var(--fondo); }
+.dia--hoy { background: var(--aurelia-champagne); box-shadow: inset 0 0 0 2px var(--aurelia-dorado); }
+.dia__numero { display: block; font-weight: 600; font-size: .85rem; margin-bottom: .3rem; }
+
+.dia__eventos, .agenda__lista { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .4rem; }
+
+.evento {
+  font-size: .78rem;
+  background: var(--fondo);
+  border-radius: 6px;
+  padding: .35rem .45rem;
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+}
+.evento--cancelado { opacity: .75; }
+.evento--cancelado .evento__titulo { text-decoration: line-through; color: var(--suave); }
+.evento__linea { display: flex; gap: .35rem; align-items: baseline; flex-wrap: wrap; }
+.evento__hora { font-weight: 600; color: var(--suave); }
+.evento__titulo { font-weight: 600; }
+.evento__lugar { color: var(--suave); }
+.evento__etiquetas { display: flex; gap: .3rem; flex-wrap: wrap; }
+.evento__acciones { display: flex; gap: .6rem; margin-top: .15rem; }
+
+.etiqueta-tipo {
+  display: inline-block;
+  padding: .1rem .5rem;
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.etiqueta-tipo--culto { background: var(--tipo-culto-fondo); color: var(--tipo-culto-texto); }
+.etiqueta-tipo--reunion { background: var(--tipo-reunion-fondo); color: var(--tipo-reunion-texto); }
+.etiqueta-tipo--actividad { background: var(--tipo-actividad-fondo); color: var(--tipo-actividad-texto); }
+.etiqueta-tipo--administrativo {
+  background: var(--tipo-administrativo-fondo);
+  color: var(--tipo-administrativo-texto);
+  border: 1px solid var(--aurelia-dorado);
+}
+
+.etiqueta-cancelado {
+  display: inline-block;
+  padding: .1rem .5rem;
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 600;
+  background: #fdecea;
+  color: var(--alerta);
+}
+.etiqueta-hoy {
+  display: inline-block;
+  margin-left: .5rem;
+  padding: .1rem .5rem;
+  border-radius: 999px;
+  font-size: .7rem;
+  font-weight: 600;
+  background: var(--aurelia-champagne);
+  color: var(--primario);
+}
+
+.agenda { display: none; }
+.agenda__dia { margin-bottom: 1rem; }
+.agenda__fecha { font-size: 1rem; margin: 0 0 .5rem; }
+.agenda .evento { background: var(--superficie); border: 1px solid var(--borde); }
+
+@media (max-width: 760px) {
+  .calendario-tabla-contenedor { display: none; }
+  .agenda { display: block; }
+  .calendario__cabecera .boton--nuevo { margin-left: 0; }
+}
+
+/* ---- Formulario de evento ---- */
+.formulario-evento { width: min(560px, 100%); }
+.formulario-evento form { display: flex; flex-direction: column; gap: 1rem; }
+
+.formulario-evento select,
+.formulario-evento textarea {
+  padding: .6rem;
+  border: 1px solid var(--borde);
+  border-radius: 6px;
+  font: inherit;
+  background: var(--superficie);
+  color: var(--texto);
+}
+.formulario-evento textarea { resize: vertical; }
+.formulario-evento select:focus,
+.formulario-evento textarea:focus {
+  outline: none;
+  border-color: var(--primario);
+  box-shadow: 0 0 0 3px rgba(59, 91, 171, .15);
+}
+.formulario-evento select[aria-invalid="true"],
+.formulario-evento textarea[aria-invalid="true"] {
+  border-color: var(--alerta);
+}
+
+.aviso {
+  padding: .6rem .8rem;
+  border-radius: 6px;
+  font-size: .9rem;
+}
+.aviso--cancelado {
+  background: #fdf3e2;
+  color: #8a5a00;
+}

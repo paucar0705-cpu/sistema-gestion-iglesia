@@ -117,3 +117,42 @@ INSERT INTO anuncios (titulo, contenido, fecha_publicacion, importante, autor_id
   ('Cambio de horario',     'A partir de noviembre el culto dominical será a las 10:30.', '2026-10-20', 1, 2),
   ('Convivio de jóvenes',   'Todos los jóvenes están invitados el sábado 7 de noviembre.', '2026-10-21', 0, 3),
   ('Campaña de limpieza',   'La campaña del 24 de octubre se reprogramará.',                '2026-10-23', 0, 3);
+
+-- =====================================================================
+--  Datos para la PRESENTACIÓN (4 de noviembre de 2026)
+--  Se agregan al final para no cambiar los id de arriba.
+--  - Evento 10 (culto del 1 de noviembre) queda SIN asistencia a propósito,
+--    para demostrar en vivo el registro de asistencia (RF-03).
+--  - Donaciones de noviembre para que el panel del Tesorero no muestre $0.
+--  - Eventos próximos para el calendario y el panel.
+-- =====================================================================
+
+-- Eventos de octubre que ya pasaron: se marcan como realizados
+UPDATE eventos SET estado = 'realizado' WHERE id IN (7, 8, 9);
+
+-- Asistencia del culto del 25 de octubre y del ensayo de alabanza
+INSERT INTO asistencias (evento_id, miembro_id, presente, registrado_por)
+  SELECT 7, id, CASE WHEN id IN (5, 11) THEN 0 ELSE 1 END, 3 FROM miembros WHERE activo = 1;
+INSERT INTO asistencias (evento_id, miembro_id, presente, registrado_por)
+  SELECT 8, miembro_id, 1, 5 FROM ministerio_miembros WHERE ministerio_id = 1 AND activo = 1;
+
+-- Próximos eventos
+INSERT INTO eventos (id, titulo, tipo, fecha, hora, lugar, descripcion, responsable_id, ministerio_id, estado, creado_por) VALUES
+  (13, 'Estudio bíblico',          'reunion',        '2026-11-04', '19:00', 'Salón anexo',      'Libro de Hechos, cap. 5', 3, 4,    'programado', 3),
+  (14, 'Junta de líderes',         'administrativo', '2026-11-06', '19:30', 'Oficina',          'Cierre del mes',          1, NULL, 'programado', 3),
+  (15, 'Culto dominical',          'culto',          '2026-11-08', '10:30', 'Templo principal', 'Nuevo horario',           1, NULL, 'programado', 3),
+  (16, 'Clase de escuela dominical','actividad',     '2026-11-08', '09:00', 'Salón infantil',   NULL,                      8, 3,    'programado', 3),
+  (17, 'Culto dominical',          'culto',          '2026-11-15', '10:30', 'Templo principal', NULL,                      1, NULL, 'programado', 3),
+  (18, 'Jornada de servicio',      'actividad',      '2026-11-21', '08:00', 'Templo principal', 'Reprogramada de octubre', 5, 5,    'programado', 3);
+
+-- Donaciones de noviembre (fechas ya pasadas: 1 y 2 de noviembre)
+INSERT INTO donaciones (fecha, monto_centavos, concepto, metodo, descripcion, miembro_id, registrado_por) VALUES
+  ('2026-11-01', 150000, 'diezmo',  'transferencia', NULL,                      1,    4),
+  ('2026-11-01',  87500, 'ofrenda', 'efectivo',      'Ofrenda culto dominical', NULL, 4),
+  ('2026-11-01',  45000, 'diezmo',  'efectivo',      NULL,                      7,    4),
+  ('2026-11-02',  70000, 'diezmo',  'tarjeta',       NULL,                      12,   4),
+  ('2026-11-02',  25000, 'otro',    'efectivo',      'Venta de antojitos',      NULL, 4);
+
+-- Anuncio reciente
+INSERT INTO anuncios (titulo, contenido, fecha_publicacion, importante, autor_id) VALUES
+  ('Bienvenida a nuevos miembros', 'Este domingo damos la bienvenida a quienes se unieron en octubre.', '2026-11-02', 1, 2);

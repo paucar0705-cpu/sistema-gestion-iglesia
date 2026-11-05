@@ -1,0 +1,58 @@
+<%- include('../partials/header', { titulo: modo === 'editar' ? 'Editar usuario' : 'Nuevo usuario' }) %>
+<h1><%= modo === 'editar' ? 'Editar usuario' : 'Nuevo usuario' %></h1>
+
+<section class="tarjeta formulario-ancho">
+  <p id="mensajeError" class="alerta" role="alert"<% if (!errores.length) { %> hidden<% } %>><%= errores.join(' ') %></p>
+
+  <form id="formUsuario" method="POST" action="<%= modo === 'editar' ? '/usuarios/' + usuario.id : '/usuarios' %>" novalidate>
+    <label>Nombre*
+      <input type="text" name="nombre" id="nombre" maxlength="120" value="<%= usuario ? usuario.nombre : '' %>" required>
+    </label>
+    <label>Correo electrónico*
+      <input type="email" name="correo" id="correo" maxlength="254" value="<%= usuario ? usuario.correo : '' %>" required>
+    </label>
+    <label>Rol*
+      <select name="rol_id" id="rol_id" required>
+        <option value="">Selecciona un rol</option>
+        <% roles.forEach(r => { %>
+          <option value="<%= r.id %>" <%= usuario && String(usuario.rol_id) === String(r.id) ? 'selected' : '' %>><%= r.nombre %></option>
+        <% }) %>
+      </select>
+    </label>
+    <label>Miembro vinculado
+      <select name="miembro_id" id="miembro_id">
+        <option value="">Sin miembro vinculado</option>
+        <% miembros.forEach(m => { %>
+          <option value="<%= m.id %>" <%= usuario && String(usuario.miembro_id) === String(m.id) ? 'selected' : '' %>><%= m.nombre %> <%= m.apellidos || '' %></option>
+        <% }) %>
+      </select>
+    </label>
+    <% if (modo === 'nuevo') { %>
+    <label>Contraseña*
+      <input type="password" name="password" id="password" required>
+    </label>
+    <label>Confirmar contraseña*
+      <input type="password" name="confirmar_password" id="confirmar_password" required>
+    </label>
+    <p class="sub">La contraseña debe tener al menos 8 caracteres, con mayúscula, minúscula y número.</p>
+    <% } %>
+    <p class="sub">* Campos obligatorios</p>
+    <div class="acciones-formulario">
+      <button type="submit" class="boton">Guardar</button>
+      <a class="boton boton--secundario" href="/usuarios">Cancelar</a>
+    </div>
+  </form>
+</section>
+
+<script src="/js/formularios.js"></script>
+<script>
+  (function () {
+    const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    validarFormulario(document.querySelector('#formUsuario'), [
+      { selector: '#nombre', validar: (valor) => valor === '', mensaje: 'El nombre es obligatorio.' },
+      { selector: '#correo', validar: (valor) => valor === '' || !regexCorreo.test(valor), mensaje: 'Ingresa un correo electrónico válido.' },
+      { selector: '#rol_id', validar: (valor) => valor === '', mensaje: 'Selecciona un rol válido.' },
+    ]);
+  })();
+</script>
+<%- include('../partials/footer') %>

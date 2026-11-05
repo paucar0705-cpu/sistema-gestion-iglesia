@@ -1,14 +1,21 @@
-// RF-03  Control de asistencia
-// Rutas: Persona 2 · Vistas: Persona 1 · Consultas: Persona 3
+// RF-03  Control de asistencias.
 const router = require('express').Router();
-const { requireSeccion } = require('../middlewares/auth');
+const asistenciasController = require('../controllers/asistencias.controller');
+const { requireSeccion, requireRoles } = require('../middlewares/auth');
+const { ROLES } = require('../config/permisos');
 
 router.use(requireSeccion('asistencias'));
 
-router.get('/', (req, res) => res.render('en-construccion', { seccion: 'asistencias' }));
+const requireGestionAsistencias = requireRoles(
+  ROLES.ADMIN,
+  ROLES.PASTOR,
+  ROLES.SECRETARIO,
+);
 
-// TODO: GET /evento/:id  -> lista de miembros activos con casilla presente/ausente
-//       POST /evento/:id -> guardar UNA fila por miembro (presente = 1 o 0)
-//                           usar INSERT ... ON CONFLICT(evento_id, miembro_id) DO UPDATE
-//       GET /historial   -> SELECT * FROM v_asistencia_por_evento
+// Pendiente: coordinar tokens CSRF cuando existan los formularios EJS.
+router.get('/', asistenciasController.listar);
+router.get('/historial', asistenciasController.historial);
+router.get('/evento/:id', asistenciasController.mostrarEvento);
+router.post('/evento/:id', requireGestionAsistencias, asistenciasController.guardar);
+
 module.exports = router;

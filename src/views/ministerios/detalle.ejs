@@ -1,0 +1,149 @@
+<%
+  const etiquetasTipo = {
+    culto: 'Culto',
+    reunion: 'Reunión',
+    actividad: 'Actividad',
+    administrativo: 'Administrativo',
+  };
+%>
+<%- include('../partials/header', { titulo: ministerio.nombre }) %>
+<p><a class="enlace-sutil" href="/ministerios">← Volver a ministerios</a></p>
+
+<h1>
+  <%= ministerio.nombre %>
+  <span class="etiqueta <%= ministerio.activo === 1 ? 'etiqueta--activo' : 'etiqueta--inactivo' %>">
+    <%= ministerio.activo === 1 ? 'Activo' : 'Inactivo' %>
+  </span>
+</h1>
+
+<p id="mensajeError" class="alerta" role="alert"<% if (!errores.length) { %> hidden<% } %>><%= errores.join(' ') %></p>
+
+<section class="tarjeta">
+  <dl class="detalle-lista">
+    <dt>Coordinador</dt><dd><%= ministerio.coordinador || '—' %></dd>
+    <dt>Descripción</dt><dd class="texto-multilinea"><%= ministerio.descripcion || '—' %></dd>
+  </dl>
+
+  <% if (puedeEditar || puedeReactivar) { %>
+  <div class="acciones-formulario">
+    <% if (puedeEditar) { %>
+      <a class="boton boton--secundario" href="/ministerios/<%= ministerio.id %>/editar">Editar</a>
+      <form method="POST" action="/ministerios/<%= ministerio.id %>/desactivar" class="form-desactivar" data-nombre="<%= ministerio.nombre %>">
+        <button type="submit" class="boton boton--secundario">Desactivar</button>
+      </form>
+    <% } %>
+    <% if (puedeReactivar) { %>
+      <form method="POST" action="/ministerios/<%= ministerio.id %>/reactivar">
+        <button type="submit" class="boton">Reactivar</button>
+      </form>
+    <% } %>
+  </div>
+  <% } %>
+</section>
+
+<section class="tarjeta">
+  <h2>Integrantes</h2>
+  <p class="sub">
+    <a class="enlace-sutil" href="/ministerios/<%= ministerio.id %>?historial=<%= incluirHistorial ? '0' : '1' %>">
+      <%= incluirHistorial ? 'Ocultar historial de bajas' : 'Ver historial de bajas' %>
+    </a>
+  </p>
+
+  <% if (!integrantes.length) { %>
+    <p class="sub">No hay integrantes<%= incluirHistorial ? ' ni historial' : '' %> registrados.</p>
+  <% } else { %>
+  <div class="tabla-scroll">
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th scope="col">Miembro</th>
+          <th scope="col">Teléfono</th>
+          <th scope="col">Correo</th>
+          <th scope="col">Desde</th>
+          <th scope="col">Estado</th>
+          <% if (puedeEditar) { %><th scope="col">Acciones</th><% } %>
+        </tr>
+      </thead>
+      <tbody>
+        <% integrantes.forEach(i => { %>
+          <tr>
+            <td><%= i.nombre %> <%= i.apellidos || '' %></td>
+            <td><%= i.telefono || '—' %></td>
+            <td><%= i.correo || '—' %></td>
+            <td><%= i.fecha_union %></td>
+            <td>
+              <% if (i.activo === 1) { %>
+                <span class="etiqueta etiqueta--activo">Activo</span>
+              <% } else { %>
+                <span class="etiqueta etiqueta--inactivo">Baja<% if (i.fecha_salida) { %> (<%= i.fecha_salida %>)<% } %></span>
+              <% } %>
+            </td>
+            <% if (puedeEditar) { %>
+            <td class="acciones">
+              <% if (i.activo === 1) { %>
+              <form method="POST" action="/ministerios/<%= ministerio.id %>/integrantes/<%= i.miembro_id %>/baja" class="form-baja-integrante" data-nombre="<%= i.nombre %> <%= i.apellidos || '' %>">
+                <button type="submit" class="accion-boton">Dar de baja</button>
+              </form>
+              <% } %>
+            </td>
+            <% } %>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+  <% } %>
+
+  <% if (puedeEditar) { %>
+  <form method="POST" action="/ministerios/<%= ministerio.id %>/integrantes" class="filtros">
+    <label>Agregar integrante
+      <select name="miembro_id" <% if (!miembrosDisponibles.length) { %>disabled<% } %>>
+        <% if (!miembrosDisponibles.length) { %>
+          <option value="">No hay miembros disponibles</option>
+        <% } else { %>
+          <option value="">Selecciona un miembro</option>
+          <% miembrosDisponibles.forEach(m => { %>
+            <option value="<%= m.id %>"><%= m.nombre %> <%= m.apellidos || '' %></option>
+          <% }) %>
+        <% } %>
+      </select>
+    </label>
+    <button type="submit" class="boton" <% if (!miembrosDisponibles.length) { %>disabled<% } %>>Agregar</button>
+  </form>
+  <% } %>
+</section>
+
+<section class="tarjeta">
+  <h2>Actividades</h2>
+  <% if (!actividades.length) { %>
+    <p class="sub">No hay actividades registradas para este ministerio.</p>
+  <% } else { %>
+  <div class="tabla-scroll">
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th scope="col">Título</th>
+          <th scope="col">Tipo</th>
+          <th scope="col">Fecha</th>
+          <th scope="col">Lugar</th>
+          <th scope="col">Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% actividades.forEach(a => { %>
+          <tr>
+            <td><%= a.titulo %></td>
+            <td><%= etiquetasTipo[a.tipo] || a.tipo %></td>
+            <td><%= a.fecha %><% if (a.hora) { %> <%= a.hora %><% } %></td>
+            <td><%= a.lugar || '—' %></td>
+            <td><%= a.estado %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+  <% } %>
+</section>
+
+<script src="/js/ministerios.js"></script>
+<%- include('../partials/footer') %>

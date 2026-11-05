@@ -9,19 +9,31 @@ const { SECCIONES } = require('./config/permisos');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const esProduccion = process.env.NODE_ENV === 'production';
+const sessionSecret = process.env.SESSION_SECRET || 'solo-desarrollo-cambiar-este-secreto';
+
+if (esProduccion && !process.env.SESSION_SECRET) {
+  throw new Error('SESSION_SECRET es obligatorio en producción.');
+}
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+app.disable('x-powered-by');
 
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(express.urlencoded({ extended: true, limit: '50kb' }));
+app.use(express.json({ limit: '50kb' }));
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'cambiar-este-secreto',
+  secret: sessionSecret,
   resave: false,
   saveUninitialized: false,
-  cookie: { httpOnly: true, maxAge: 1000 * 60 * 60 * 4 }, // 4 horas
+  cookie: {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: esProduccion,
+    maxAge: 1000 * 60 * 60 * 4,
+  },
 }));
 
 // Variables disponibles en TODAS las vistas
@@ -49,6 +61,10 @@ app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
   res.status(500).render('error', { titulo: 'Error del servidor', mensaje: 'Ocurrió un error inesperado.' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Servidor en http://localhost:${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Servidor en http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;

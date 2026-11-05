@@ -1,0 +1,65 @@
+<%- include('../partials/header', { titulo: 'Anuncios' }) %>
+<h1>Anuncios</h1>
+
+<% if (puedeEditar) { %>
+  <p class="acciones-formulario"><a class="boton boton--nuevo" href="/anuncios/nuevo">Nuevo anuncio</a></p>
+<% } %>
+
+<% if (mensaje) { %><p role="status"><%= mensaje %></p><% } %>
+
+<% if (importantes.length) { %>
+<section class="tarjeta">
+  <h2>Importantes</h2>
+  <ul class="lista">
+    <% importantes.forEach(a => { %>
+      <li class="importante"><strong><%= a.titulo %></strong><span class="texto-multilinea"><%= a.contenido %></span></li>
+    <% }) %>
+  </ul>
+</section>
+<% } %>
+
+<% if (!anuncios.length) { %>
+  <p class="sub">No hay anuncios registrados.</p>
+<% } else { %>
+<div class="tabla-scroll">
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th scope="col">Título</th>
+        <th scope="col">Contenido</th>
+        <th scope="col">Fecha de publicación</th>
+        <th scope="col">Autor</th>
+        <th scope="col">Estado</th>
+        <% if (puedeEditar) { %><th scope="col">Acciones</th><% } %>
+      </tr>
+    </thead>
+    <tbody>
+      <% anuncios.forEach(a => { %>
+        <tr>
+          <td><%= a.titulo %> <% if (a.importante) { %><span class="etiqueta etiqueta--activo">Importante</span><% } %></td>
+          <td class="texto-multilinea"><%= a.contenido %></td>
+          <td><%= a.fecha_publicacion %></td>
+          <td><%= a.autor || '—' %></td>
+          <td>
+            <% if (a.programado) { %>
+              <span class="etiqueta etiqueta--inactivo">Programado</span>
+            <% } else { %>
+              <span class="etiqueta etiqueta--activo">Publicado</span>
+            <% } %>
+          </td>
+          <% if (puedeEditar) { %>
+          <td class="acciones">
+            <a class="accion-enlace" href="/anuncios/<%= a.id %>/editar">Editar</a>
+            <form method="POST" action="/anuncios/<%= a.id %>/eliminar" class="form-eliminar-anuncio" data-nombre="<%= a.titulo %>">
+              <button type="submit" class="accion-boton">Eliminar</button>
+            </form>
+          </td>
+          <% } %>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+<% } %>
+<script src="/js/anuncios.js"></script>
+<%- include('../partials/footer') %>

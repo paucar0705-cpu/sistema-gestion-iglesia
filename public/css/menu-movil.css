@@ -1,0 +1,106 @@
+/* Menú como panel lateral deslizable (drawer) para pantallas angostas (≤760px).
+   Responsable: Persona 1 (Frontend)
+
+   La clase "js" la agrega un <script> inline en el <head> de header.ejs, ANTES
+   de que el navegador pinte el <body>, para que el drawer y el botón solo
+   existan con JavaScript activo. Sin esa clase (o sin JS), .menu__panel se
+   queda en el flujo normal, visible, como el menú de escritorio. */
+
+.menu__cabecera { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin-bottom: 1.5rem; }
+.menu__marca { margin-bottom: 0; }
+.menu__marca--panel { display: none; }
+.menu__panel { display: flex; flex-direction: column; flex: 1; }
+
+.boton-menu { display: none; }
+.menu__scrim { display: none; }
+
+@media (max-width: 760px) {
+  .menu__cabecera {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    height: 56px;
+    margin-bottom: 0;
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .boton-menu {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    background: none;
+    border: 1px solid currentColor;
+    border-radius: 6px;
+    color: inherit;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  /* Ícono: dos trazos (hamburguesa / X) que se alternan con display, no con rotación */
+  .boton-menu__icono line { stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+  .boton-menu__trazo-cerrar { display: none; }
+  .menu.menu--abierto .boton-menu__trazo-abrir { display: none; }
+  .menu.menu--abierto .boton-menu__trazo-cerrar { display: block; }
+
+  /* El panel se vuelve un drawer fijo y sale del flujo: ya no empuja el contenido.
+     Fondo/texto: mismo valor que .menu ya usa en estilos.css (no es un color
+     nuevo) — hace falta repetirlo porque, al ser "fixed", el panel ya no pinta
+     dentro de la caja de .menu. */
+  .js .menu__panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 4;
+    width: min(85vw, 320px);
+    height: 100vh;
+    height: 100dvh;
+    margin: 0;
+    overflow-y: auto;
+    background: #1f2a44;
+    color: #fff;
+    padding: 1rem;
+    padding-top: calc(1rem + env(safe-area-inset-top));
+    padding-left: calc(1rem + env(safe-area-inset-left));
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+    visibility: hidden;
+    transform: translateX(-100%);
+  }
+
+  .js .menu.menu--abierto .menu__panel {
+    visibility: visible;
+    transform: translateX(0);
+  }
+
+  .menu__marca--panel { display: block; font-weight: 700; margin-bottom: 1.5rem; }
+
+  /* Fondo oscurecido: solo existe (y cubre todo) cuando el menú está abierto */
+  .js .menu__scrim { display: none; }
+  .js .menu.menu--abierto + .menu__scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    background: rgba(0, 0, 0, .5);
+  }
+
+  /* Objetivos táctiles de al menos 44px */
+  .menu nav a,
+  .menu__usuario button {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+}
+
+/* Bloquea el scroll del fondo mientras el panel está abierto (clase puesta por menu.js) */
+html.menu-bloqueado { overflow: hidden; }
+
+@media (prefers-reduced-motion: no-preference) {
+  @media (max-width: 760px) {
+    .js .menu__panel { transition: transform .25s ease, visibility .25s; }
+  }
+}
