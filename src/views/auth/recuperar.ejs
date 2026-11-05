@@ -1,0 +1,32 @@
+<%- include('../partials/header', { titulo: 'Recuperar contraseña' }) %>
+<section class="tarjeta login aurelia-login">
+  <h1 class="sr-only">Aurelia, Sistema de Gestión de Iglesias</h1>
+  <img src="/img/aurelia-logo.png" alt="Aurelia" width="160" height="160" class="aurelia-login__logo">
+  <%- include('../partials/eslogan') %>
+  <p class="sub">Recupera el acceso a tu cuenta</p>
+
+  <p id="mensajeError" class="alerta" role="alert"<% if (!errores.length) { %> hidden<% } %>><%= errores.join(' ') %></p>
+
+  <% if (mensaje) { %>
+    <p role="status"><%= mensaje %></p>
+    <a class="boton" href="/login">Volver a iniciar sesión</a>
+  <% } else { %>
+    <form id="formRecuperar" method="POST" action="/recuperar" novalidate>
+      <label>Correo electrónico
+        <input type="email" name="correo" id="correo" value="<%= correo %>" required autofocus>
+      </label>
+      <button type="submit" class="boton">Enviar instrucciones</button>
+      <a class="enlace-sutil" href="/login">Volver a iniciar sesión</a>
+    </form>
+    <script src="/js/formularios.js"></script>
+    <script>
+      (function () {
+        const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        validarFormulario(document.querySelector('#formRecuperar'), [
+          { selector: '#correo', validar: (valor) => valor === '' || !regexCorreo.test(valor), mensaje: 'Ingresa un correo electrónico válido.' },
+        ]);
+      })();
+    </script>
+  <% } %>
+</section>
+<%- include('../partials/footer') %>

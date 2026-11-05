@@ -1,0 +1,58 @@
+<%- include('../partials/header', { titulo: 'Resumen de donaciones' }) %>
+<p><a class="enlace-sutil" href="/donaciones">← Volver a donaciones</a></p>
+<h1>Resumen mensual de donaciones</h1>
+
+<div class="indicadores">
+  <div class="tarjeta indicador indicador--dinero">
+    <span>Ingresos del mes actual</span>
+    <strong><%= Number(ingresosMes.total).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }) %></strong>
+  </div>
+  <div class="tarjeta indicador">
+    <span>Aportaciones del mes</span>
+    <strong><%= ingresosMes.aportaciones %></strong>
+  </div>
+</div>
+
+<form class="filtros" method="GET" action="/donaciones/resumen">
+  <label>Desde <input type="date" name="desde" value="<%= filtros.desde %>"></label>
+  <label>Hasta <input type="date" name="hasta" value="<%= filtros.hasta %>"></label>
+  <button type="submit" class="boton">Filtrar</button>
+</form>
+
+<p id="mensajeError" class="alerta" role="alert"<% if (!errores.length) { %> hidden<% } %>><%= errores.join(' ') %></p>
+
+<% if (!resumen.length) { %>
+  <p class="sub">No hay aportaciones en el periodo seleccionado.</p>
+<% } else { %>
+<div class="tabla-scroll">
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th scope="col">Mes</th>
+        <th scope="col">Aportaciones</th>
+        <th scope="col"><%= conceptos.diezmo %></th>
+        <th scope="col"><%= conceptos.ofrenda %></th>
+        <th scope="col"><%= conceptos.donacion_especial %></th>
+        <th scope="col"><%= conceptos.otro %></th>
+        <th scope="col">Anónimas</th>
+        <th scope="col">Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% resumen.forEach(r => { %>
+        <tr>
+          <td><%= r.mes %></td>
+          <td><%= r.aportaciones %></td>
+          <td><%= Number(r.diezmos).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }) %></td>
+          <td><%= Number(r.ofrendas).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }) %></td>
+          <td><%= Number(r.especiales).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }) %></td>
+          <td><%= Number(r.otros).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }) %></td>
+          <td><%= r.anonimas %></td>
+          <td><%= Number(r.total).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }) %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+<% } %>
+<%- include('../partials/footer') %>

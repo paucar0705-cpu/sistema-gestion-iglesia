@@ -526,3 +526,10 @@ input, select, textarea { border-radius: 12px; }
 .etiqueta { border-radius: 999px; }
 
 h1 { font-family: var(--fuente-titulos); }
+
+/* Vistas de usuarios, asistencias, anuncios, configuración, ministerios y donaciones */
+.opcion-casilla { flex-direction: row; align-items: center; gap: .5rem; }
+.texto-multilinea { white-space: pre-line; }
+.detalle-lista { display: grid; grid-template-columns: max-content 1fr; gap: .5rem 1.25rem; margin: 0; }
+.detalle-lista dt { color: var(--suave); font-weight: 600; }
+.detalle-lista dd { margin: 0; }

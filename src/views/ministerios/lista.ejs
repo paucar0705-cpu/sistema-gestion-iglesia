@@ -1,0 +1,67 @@
+<%- include('../partials/header', { titulo: 'Ministerios' }) %>
+<h1>Ministerios</h1>
+
+<% if (puedeEditar) { %>
+<form class="filtros" method="GET" action="/ministerios">
+  <label>Estado
+    <select name="estado">
+      <option value="activos" <%= estado === 'activos' ? 'selected' : '' %>>Activos</option>
+      <option value="inactivos" <%= estado === 'inactivos' ? 'selected' : '' %>>Inactivos</option>
+      <option value="todos" <%= estado === 'todos' ? 'selected' : '' %>>Todos</option>
+    </select>
+  </label>
+  <button type="submit" class="boton">Filtrar</button>
+  <a class="boton boton--nuevo" href="/ministerios/nuevo">Nuevo ministerio</a>
+</form>
+<% } %>
+
+<p id="mensajeError" class="alerta" role="alert"<% if (!errores.length) { %> hidden<% } %>><%= errores.join(' ') %></p>
+
+<% if (!ministerios.length) { %>
+  <p class="sub">No se encontraron ministerios.</p>
+<% } else { %>
+<div class="tabla-scroll">
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th scope="col">Nombre</th>
+        <th scope="col">Coordinador</th>
+        <th scope="col">Integrantes</th>
+        <th scope="col">Próximas actividades</th>
+        <th scope="col">Estado</th>
+        <% if (puedeEditar) { %><th scope="col">Acciones</th><% } %>
+      </tr>
+    </thead>
+    <tbody>
+      <% ministerios.forEach(m => { %>
+        <tr>
+          <td><a class="accion-enlace" href="/ministerios/<%= m.id %>"><%= m.nombre %></a></td>
+          <td><%= m.coordinador || '—' %></td>
+          <td><%= m.integrantes %></td>
+          <td><%= m.proximas_actividades %></td>
+          <td>
+            <span class="etiqueta <%= m.activo === 1 ? 'etiqueta--activo' : 'etiqueta--inactivo' %>">
+              <%= m.activo === 1 ? 'Activo' : 'Inactivo' %>
+            </span>
+          </td>
+          <% if (puedeEditar) { %>
+          <td class="acciones">
+            <% if (m.activo === 1) { %>
+              <a class="accion-enlace" href="/ministerios/<%= m.id %>/editar">Editar</a>
+              <form method="POST" action="/ministerios/<%= m.id %>/desactivar" class="form-desactivar" data-nombre="<%= m.nombre %>">
+                <button type="submit" class="accion-boton">Desactivar</button>
+              </form>
+            <% } else { %>
+              <form method="POST" action="/ministerios/<%= m.id %>/reactivar">
+                <button type="submit" class="accion-boton">Reactivar</button>
+              </form>
+            <% } %>
+          </td>
+          <% } %>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+<% } %>
+<%- include('../partials/footer') %>

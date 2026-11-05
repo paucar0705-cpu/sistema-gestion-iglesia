@@ -1,0 +1,38 @@
+<%- include('../partials/header', { titulo: modo === 'editar' ? 'Editar anuncio' : 'Nuevo anuncio' }) %>
+<h1><%= modo === 'editar' ? 'Editar anuncio' : 'Nuevo anuncio' %></h1>
+
+<section class="tarjeta formulario-ancho">
+  <p id="mensajeError" class="alerta" role="alert"<% if (!errores.length) { %> hidden<% } %>><%= errores.join(' ') %></p>
+
+  <form id="formAnuncio" method="POST" action="<%= modo === 'editar' ? '/anuncios/' + anuncio.id : '/anuncios' %>" novalidate>
+    <label>Título*
+      <input type="text" name="titulo" id="titulo" maxlength="150" value="<%= anuncio ? anuncio.titulo : '' %>" required>
+    </label>
+    <label>Contenido*
+      <textarea name="contenido" id="contenido" maxlength="5000" rows="6" required><%= anuncio ? anuncio.contenido : '' %></textarea>
+    </label>
+    <label>Fecha de publicación
+      <input type="date" name="fecha_publicacion" id="fecha_publicacion" value="<%= anuncio ? anuncio.fecha_publicacion : '' %>">
+    </label>
+    <label class="opcion-casilla">
+      <input type="checkbox" name="importante" id="importante" <%= anuncio && anuncio.importante ? 'checked' : '' %>>
+      Marcar como importante
+    </label>
+    <p class="sub">* Campos obligatorios. Fecha vacía = hoy; una fecha futura programa el anuncio.</p>
+    <div class="acciones-formulario">
+      <button type="submit" class="boton">Guardar</button>
+      <a class="boton boton--secundario" href="/anuncios">Cancelar</a>
+    </div>
+  </form>
+</section>
+
+<script src="/js/formularios.js"></script>
+<script>
+  (function () {
+    validarFormulario(document.querySelector('#formAnuncio'), [
+      { selector: '#titulo', validar: (valor) => valor === '', mensaje: 'El título es obligatorio.' },
+      { selector: '#contenido', validar: (valor) => valor === '', mensaje: 'El contenido es obligatorio.' },
+    ]);
+  })();
+</script>
+<%- include('../partials/footer') %>

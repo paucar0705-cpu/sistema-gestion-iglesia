@@ -1,0 +1,26 @@
+<%- include('../partials/header', { titulo: 'Restablecer contraseña' }) %>
+<section class="tarjeta login aurelia-login">
+  <h1 class="sr-only">Aurelia, Sistema de Gestión de Iglesias</h1>
+  <img src="/img/aurelia-logo.png" alt="Aurelia" width="160" height="160" class="aurelia-login__logo">
+  <%- include('../partials/eslogan') %>
+  <p class="sub">Elige tu nueva contraseña</p>
+
+  <p id="mensajeError" class="alerta" role="alert"<% if (!errores.length) { %> hidden<% } %>><%= errores.join(' ') %></p>
+
+  <% if (usuario) { %>
+    <p class="sub">Hola, <%= usuario.nombre %>.</p>
+    <form id="formRestablecer" method="POST" action="<%= '/restablecer/' + token %>" novalidate>
+      <label>Nueva contraseña*
+        <input type="password" name="password" id="password" required autofocus>
+      </label>
+      <label>Confirmar contraseña*
+        <input type="password" name="confirmar_password" id="confirmar_password" required>
+      </label>
+      <p class="sub">Debe tener al menos 8 caracteres, con mayúscula, minúscula y número.</p>
+      <button type="submit" class="boton">Guardar contraseña</button>
+    </form>
+  <% } else { %>
+    <a class="boton" href="/recuperar">Solicitar un nuevo enlace</a>
+  <% } %>
+</section>
+<%- include('../partials/footer') %>
